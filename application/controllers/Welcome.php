@@ -20,6 +20,36 @@ class Welcome extends CI_Controller {
 	 */
 	public function index()
 	{
-		$this->load->view('welcome_message');
+		$data = array();
+
+		if($this->session->flashdata('notif')) {
+			if($this->session->flashdata('notif') == 'login_false') {
+			$data['alert'] = "
+			    const Toast = Swal.mixin({
+			      toast: true,
+			      position: 'top-end',
+			      showConfirmButton: false,
+			      timer: 3000
+			    });
+
+			      Toast.fire({
+			        icon: 'error',
+			        title: 'Nrp atau PIN salah'
+			      });
+			   ";	
+			}
+		}
+		if($this->input->post('btnsignin')) {
+			$cek =  $this->student_model->doSignIn($this->input->post('snrp'), $this->input->post('password'));
+
+			if($cek == false) {
+				$this->session->set_flashdata('notif', 'login_false');
+				redirect('');
+			} else {
+				$this->session->set_userdata('user', $cek);
+				redirect('dashboard');
+			}
+		}
+		$this->load->view('v_login', $data);
 	}
 }
