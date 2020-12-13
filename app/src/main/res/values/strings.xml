@@ -1,8 +1,0 @@
-<resources>
-    <string name="app_name">QBAS</string>
-    <string name="sign_in">SIGN IN</string>
-    <string name="nrp">sNrp</string>
-    <string name="password">password</string>
-    <string name="login">LOGIN</string>
-    <string name="tagline">QR Based Attendance System</string>
-</resources>
