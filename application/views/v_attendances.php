@@ -27,12 +27,12 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Current Class</h3>
+                <h3 class="card-title">Class in Progress</h3>
               </div>
               <div class="card-body">
                 <?php if(count($current) ==0) { ?>
                 <p>No class at the moment</p>
-              <?php } ?>
+              <?php } else { ?>
               <div class="row">
                 <div class="col-12">
                   <dl class="row">
@@ -51,6 +51,7 @@
                   <button class="btn btn-primary btnqr" data-toggle="modal" data-target="#myModal" attid="<?php echo $current[0]['id']; ?>" attnrp="<?php echo $user->nrp; ?>" attopenid="<?php echo $current[0]['course_open_id']; ?>"> <i class="nav-icon fas fa-qrcode"></i> Request QR</button>
                 </div>
               </div>
+            <?php } ?>
               </div>
             </div>
           </div>
