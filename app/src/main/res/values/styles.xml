@@ -30,10 +30,31 @@
         <item name="android:background">@drawable/roundededittext</item>
     </style>
 
+    <style name="heading2" parent="TextAppearance.MaterialComponents.Headline2">
+        <item name="fontFamily">@font/montserrat_bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="heading3" parent="TextAppearance.MaterialComponents.Headline3">
+        <item name="fontFamily">@font/montserrat_bold</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="body1" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="fontFamily">@font/nunito</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="body2" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="fontFamily">@font/nunito</item>
+        <item name="android:textSize">10sp</item>
+    </style>
     <style name="TextHeading1" parent="Widget.MaterialComponents.TextView">
         <item name="android:fontFamily">@font/montserrat_bold</item>
         <item name="android:textSize">28sp</item>
     </style>
+
+
 
     <style name="TextTitle" parent="Widget.MaterialComponents.TextView">
         <item name="android:fontFamily">@font/montserrat_bold</item>
