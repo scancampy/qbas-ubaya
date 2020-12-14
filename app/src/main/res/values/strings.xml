@@ -2,7 +2,12 @@
     <string name="app_name">QBAS</string>
     <string name="sign_in">SIGN IN</string>
     <string name="nrp">sNrp</string>
-    <string name="password">password</string>
+    <string name="password">PIN</string>
     <string name="login">LOGIN</string>
+    <string name="report">Report</string>
+    <string name="qrscan">Scan QR</string>
+    <string name="schedule">Schedule</string>
+    <string name="setting">Setting</string>
+    <string name="upcoming">Upcoming</string>
     <string name="tagline">QR Based Attendance System</string>
 </resources>

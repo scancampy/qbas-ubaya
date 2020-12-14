@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/itemUpcoming"
+        android:icon="@drawable/ic_blackboard"
+        android:title="@string/upcoming"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/itemSchedule"
+        android:icon="@drawable/ic_calendar"
+        android:title="@string/schedule"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/itemScan"
+        android:icon="@drawable/ic_mobile"
+        android:title="@string/qrscan"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/itemReport"
+        android:icon="@drawable/ic_check_in"
+        android:title="@string/report"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/itemSetting"
+        android:icon="@drawable/ic_web_page"
+        android:title="@string/setting"
+        app:showAsAction="ifRoom" />
+</menu>
