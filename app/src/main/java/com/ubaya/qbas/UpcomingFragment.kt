@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
@@ -33,6 +35,7 @@ class UpcomingFragment : Fragment() {
     private var param2: String? = null
 
     var v:View ?= null
+    var schedule:ArrayList<Schedule> = ArrayList()
 
     fun volleyGetServerDate() {
         var queue = Volley.newRequestQueue(activity)
@@ -49,6 +52,8 @@ class UpcomingFragment : Fragment() {
             })
         queue.add(sr)
     }
+
+
 
     fun volleyGetStudent() {
         var queue = Volley.newRequestQueue(activity)
@@ -104,7 +109,74 @@ class UpcomingFragment : Fragment() {
                     txtTime.text = start
 
                     v!!.findViewById<TextView>(R.id.txtNoClass).visibility = View.GONE
-                    v!!.findViewById<TextView>(R.id.txtInstruction).text = "Request QR code from QBAS web, and then use app scan QR to record your attendances"
+                    var absence = obj.getJSONArray("absence")
+                    if(absence[0].toString() == "true") {
+                        v!!.findViewById<TextView>(R.id.txtInstruction).text = "Your attendances have been recorded"
+                    } else {
+                        v!!.findViewById<TextView>(R.id.txtInstruction).text = "Request QR code from QBAS web, and then use app to scan QR to record your attendances"
+                    }
+
+                    v!!.findViewById<TextView>(R.id.txtInstruction).visibility = View.VISIBLE
+                    v!!.findViewById<TextView>(R.id.txtCourseName).visibility = View.VISIBLE
+                    v!!.findViewById<TextView>(R.id.txtCourseID).visibility = View.VISIBLE
+                    v!!.findViewById<TextView>(R.id.txtInstruction).visibility = View.VISIBLE
+                    v!!.findViewById<TextView>(R.id.txtCourseTime).visibility = View.VISIBLE
+                    v!!.findViewById<TextView>(R.id.txtClassInProgress).visibility = View.VISIBLE
+                } else {
+                    v!!.findViewById<TextView>(R.id.txtNoClass).visibility = View.VISIBLE
+                    v!!.findViewById<TextView>(R.id.txtInstruction).visibility = View.GONE
+                    v!!.findViewById<TextView>(R.id.txtCourseName).visibility = View.GONE
+                    v!!.findViewById<TextView>(R.id.txtCourseID).visibility = View.GONE
+                    v!!.findViewById<TextView>(R.id.txtInstruction).visibility = View.GONE
+                    v!!.findViewById<TextView>(R.id.txtCourseTime).visibility = View.GONE
+                    v!!.findViewById<TextView>(R.id.txtClassInProgress).visibility = View.GONE
+                }
+            },
+            Response.ErrorListener {
+                Log.d("getclasserror ", it.toString())
+            }){
+            override fun getParams(): MutableMap<String, String> {
+                var params = HashMap<String, String>()
+                val sharedPref = activity?.getSharedPreferences("NRP", Context.MODE_PRIVATE)
+                val ceknrp = sharedPref?.getString("nrp","")
+
+                params["nrp"] = ceknrp.toString()
+                return params
+            }
+        }
+        queue.add(sr)
+    }
+
+    fun volleyGetUpcoming() {
+        var queue = Volley.newRequestQueue(activity)
+        var url = Setting.baseUrl + "api/getupcoming"
+        var sr = object: StringRequest(
+            Method.POST, url,
+            Response.Listener<String> {
+                Log.d("getupcoming ", it)
+                var obj = JSONObject(it)
+                if (obj.getString("result") == "true") {
+                    var data = obj.getJSONArray("data")
+                    schedule = ArrayList()
+
+                    for(i in 0 until data.length()) {
+                        var course_open_id = data.getJSONObject(i).getInt("course_open_id")
+                        var course_id = data.getJSONObject(i).getString("course_id")
+                        var course_name = data.getJSONObject(i).getString("course_name")
+                        var kp = data.getJSONObject(i).getString("kp")
+                        var id = data.getJSONObject(i).getInt("id")
+                        var start_date = data.getJSONObject(i).getString("start_date")
+                        var end_date = data.getJSONObject(i).getString("end_date")
+                        var start_date_format = data.getJSONObject(i).getString("start_date_format")
+                        schedule.add(Schedule(course_open_id,course_id,course_name,kp,id,start_date, start_date_format, end_date))
+                    }
+
+                    var rv = v!!.findViewById<RecyclerView>(R.id.recyclerView)
+                    val lm: LinearLayoutManager = LinearLayoutManager(activity)
+                    rv?.layoutManager = lm
+                    rv?.setHasFixedSize(true)
+                    rv.adapter = UpcomingAdapter(schedule, activity!!.applicationContext)
+                    Log.d("getupcoming ", schedule.toString())
                 }
             },
             Response.ErrorListener {
@@ -127,6 +199,7 @@ class UpcomingFragment : Fragment() {
         volleyGetServerDate()
         volleyGetStudent()
         volleyGetCurrentClass()
+        volleyGetUpcoming()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
