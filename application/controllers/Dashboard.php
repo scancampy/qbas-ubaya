@@ -20,6 +20,7 @@ class Dashboard extends CI_Controller {
     		$schedule_id = $this->input->post('nid');
     		$course_open_id = $this->input->post('ncourse_open_id');
     		$hash = $this->attendances_model->requestQR($nrp, $course_open_id, $schedule_id);
+
     	
     		$this->load->library('ciqrcode'); //pemanggilan library QR CODE
  
@@ -40,7 +41,7 @@ class Dashboard extends CI_Controller {
 	        $params['size'] = 10;
 	        $params['savename'] = FCPATH.$config['imagedir'].$image_name; //simpan image QR CODE ke folder assets/images/
 	        $this->ciqrcode->generate($params); 
-    		echo json_encode(array('result' => true,'qr' => $image_name));
+    		echo json_encode(array('result' => true,'qr' => $image_name, 'hash' => $hash));
     	} else {
     		echo json_encode(array('result' => false));
     	}
@@ -51,6 +52,9 @@ class Dashboard extends CI_Controller {
 
 	public function index() { 
 		$data = array();
+
+		
+
 		$data['user'] = $this->session->userdata('user');
 		$data['js'] = '
 		$(".btnqr").on("click", function() {
@@ -60,6 +64,7 @@ class Dashboard extends CI_Controller {
 			var course_open_id = $(this).attr("attopenid");
 
 			$.post("'.base_url('dashboard/generateqr').'", {nid:id, nnrp:nrp, ncourse_open_id:course_open_id}, function(data) {
+				
 				var obj = JSON.parse(data);
 				if(obj.result == true) {
 					var qr = obj.qr;

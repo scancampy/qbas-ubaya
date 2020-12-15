@@ -115,7 +115,7 @@
             <div class="modal-body">
               <div class="row">
                 <div class="col-12 text-center">
-                  <img src="" id="qrimage" />
+                  <img src="" id="qrimage" class="col-6" />
                 </div>
               </div>
               <p>Instructions:</p>
