@@ -23,6 +23,7 @@ class DashboardActivity : AppCompatActivity() {
         setContentView(R.layout.activity_dashboard)
         bottomNav.itemIconTintList = null
         fragments.add(UpcomingFragment())
+
         var adapter = PagerAdapter(this, fragments)
         viewPager.adapter = adapter
 
@@ -79,6 +80,8 @@ class DashboardActivity : AppCompatActivity() {
                 var intent = Intent(this, QRActivity::class.java)
                 startActivity(intent)
                 this.finish()
+            } else if(it.itemId == R.id.itemSetting) {
+
             }
             true
         }
