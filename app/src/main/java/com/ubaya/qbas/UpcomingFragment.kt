@@ -168,7 +168,8 @@ class UpcomingFragment : Fragment() {
                         var start_date = data.getJSONObject(i).getString("start_date")
                         var end_date = data.getJSONObject(i).getString("end_date")
                         var start_date_format = data.getJSONObject(i).getString("start_date_format")
-                        schedule.add(Schedule(course_open_id,course_id,course_name,kp,id,start_date, start_date_format, end_date))
+                        var methods = data.getJSONObject(i).getString("methods")
+                        schedule.add(Schedule(course_open_id,course_id,course_name,kp,id,start_date, start_date_format, end_date, methods))
                     }
 
                     var rv = v!!.findViewById<RecyclerView>(R.id.recyclerView)

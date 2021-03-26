@@ -21,6 +21,7 @@ class UpcomingAdapter(val schedule: ArrayList<Schedule>, val ctx: Context): Recy
         holder.v.txtCourseId.text = schedule[position].course_id
         holder.v.txtKP.text = " (" + schedule[position].kp + ")"
         holder.v.txtDate.text = schedule[position].start_date_format
+        holder.v.txtMethod.text = schedule[position].method
     }
 
     override fun getItemCount(): Int {

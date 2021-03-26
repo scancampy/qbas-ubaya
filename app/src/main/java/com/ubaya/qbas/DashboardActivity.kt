@@ -23,6 +23,7 @@ class DashboardActivity : AppCompatActivity() {
         setContentView(R.layout.activity_dashboard)
         bottomNav.itemIconTintList = null
         fragments.add(UpcomingFragment())
+        fragments.add(SettingFragment())
 
         var adapter = PagerAdapter(this, fragments)
         viewPager.adapter = adapter
@@ -81,7 +82,9 @@ class DashboardActivity : AppCompatActivity() {
                 startActivity(intent)
                 this.finish()
             } else if(it.itemId == R.id.itemSetting) {
-
+                viewPager.currentItem = 1
+            } else if(it.itemId == R.id.itemUpcoming) {
+                viewPager.currentItem = 0
             }
             true
         }

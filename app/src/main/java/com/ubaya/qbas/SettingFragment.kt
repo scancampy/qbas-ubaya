@@ -55,6 +55,8 @@ class SettingFragment : Fragment() {
 
                 activity!!.finish()
             }
+            d.setNegativeButton("Cancel",null)
+            d.create().show()
         }
     }
 

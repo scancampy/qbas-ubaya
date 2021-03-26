@@ -6,5 +6,6 @@ data class Schedule(var course_open_id:Int,
                     var kp:String, var id:Int,
                     var start_date:String,
                     var start_date_format: String,
-                    var end_date:String) {
+                    var end_date:String,
+                    var method:String) {
 }
