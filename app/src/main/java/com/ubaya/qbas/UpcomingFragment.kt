@@ -1,5 +1,6 @@
 package com.ubaya.qbas
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -17,6 +18,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_upcoming.*
 import org.json.JSONObject
 
 // TODO: Rename parameter arguments, choose names that match
@@ -53,7 +55,29 @@ class UpcomingFragment : Fragment() {
         queue.add(sr)
     }
 
+    private fun volleyButtonAttend() {
+        var queue = Volley.newRequestQueue(activity)
+        var url = Setting.baseUrl + "api/buttonattend"
+        var sr = object: StringRequest(
+            Method.POST, url,
+            Response.Listener<String> {
+                Log.d("getstudent ", it)
 
+            },
+            Response.ErrorListener {
+                Log.d("getstudent ", it.toString())
+            }){
+            override fun getParams(): MutableMap<String, String> {
+                var params = HashMap<String, String>()
+                val sharedPref = activity?.getSharedPreferences("NRP", Context.MODE_PRIVATE)
+                val ceknrp = sharedPref?.getString("nrp","")
+
+                params["nrp"] = ceknrp.toString()
+                return params
+            }
+        }
+        queue.add(sr)
+    }
 
     fun volleyGetStudent() {
         var queue = Volley.newRequestQueue(activity)
@@ -97,8 +121,11 @@ class UpcomingFragment : Fragment() {
                     var arr = obj.getJSONArray("data")
                     var course_name = arr.getJSONObject(0).getString("course_name")
                     var course_id = arr.getJSONObject(0).getString("course_id")
+
                     var kp = arr.getJSONObject(0).getString("kp")
                     var start = arr.getJSONObject(0).getString("start_date")
+
+                    var methods = arr.getJSONObject(0).getString("methods")
                     var txtCourseName = v!!.findViewById<TextView>(R.id.txtCourseName)
                     txtCourseName.text = course_name
 
@@ -113,7 +140,15 @@ class UpcomingFragment : Fragment() {
                     if(absence[0].toString() == "true") {
                         v!!.findViewById<TextView>(R.id.txtInstruction).text = "Your attendances have been recorded"
                     } else {
-                        v!!.findViewById<TextView>(R.id.txtInstruction).text = "Request QR code from QBAS web, and then use app to scan QR to record your attendances"
+                        if(methods =="simple") {
+                            v!!.findViewById<TextView>(R.id.txtInstruction).text =
+                                "Please use the button attend to record your attendances"
+                            btnAttend.visibility = View.VISIBLE
+                            checkAttend.visibility = View.VISIBLE
+                        } else if(methods =="auto") {
+                            v!!.findViewById<TextView>(R.id.txtInstruction).text =
+                                "Request QR code from QBAS web, and then use the app to scan QR to record your attendances"
+                        }
                     }
 
                     v!!.findViewById<TextView>(R.id.txtInstruction).visibility = View.VISIBLE
@@ -218,6 +253,23 @@ class UpcomingFragment : Fragment() {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_upcoming, container, false)
         return v
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        checkAttend.setOnCheckedChangeListener { compoundButton, b ->
+            btnAttend.isEnabled = b
+        }
+        
+        btnAttend.setOnClickListener {
+            volleyButtonAttend()
+            txtInstruction.text = "Your attendances have been recorded"
+
+            Snackbar.make(it, "Your attendances have been recorded",Snackbar.LENGTH_SHORT).show()
+
+            btnAttend.visibility = View.GONE
+            checkAttend.visibility = View.GONE
+        }
     }
 
     companion object {

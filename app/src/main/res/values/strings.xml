@@ -17,4 +17,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="Setting">setting</string>
     <string name="name">Name</string>
+    <string name="attend">Attend</string>
+    <string name="attendstatement">I attended this course</string>
 </resources>
