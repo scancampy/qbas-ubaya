@@ -49,6 +49,7 @@ class Attendances_model extends CI_Model {
 									'course_id' => $value->course_id,
 									'course_name' => $value->course_name,
 									'kp' => $value->KP,
+									'methods' => $value2->methods,
 									'id' => $value2->id,
 									'start_date' => $value2->start_date,
 									'end_date' => $value2->end_date
@@ -87,6 +88,35 @@ class Attendances_model extends CI_Model {
 			return $data;
 		}
 	}
+
+	public function buttonattend($nrp) {
+		$hasil = $this->getCurrentClass($nrp);
+
+		$cek = false;
+		if($hasil == false) {
+			return false;
+		} else {
+			foreach ($hasil as $key => $value) {
+				$id = $value['id'];
+				$this->db->reset_query();
+
+				$result = $this->db->get_where('absence', array('schedule_id' => $id, 'student_nrp' => $nrp, 'is_absence' => 0));
+
+				if($result->num_rows() >0) {
+					$hresult = $result->row();
+
+					$data = array('absence_date' => date('Y-m-d H:i:s'), 'is_absence' => 1);
+					$this->db->where('id', $hresult->id);
+					$this->db->update('absence', $data);
+
+					$cek = true;
+				}
+			}
+
+			return $cek;
+		}
+	}
+
 
 	public function checkQR($nrp, $qr) {
 		$hasil = $this->getCurrentClass($nrp);
@@ -143,6 +173,7 @@ class Attendances_model extends CI_Model {
 						$schedule[] = array('course_open_id' => $value->course_open_id,
 									'course_id' => $value->course_id,
 									'course_name' => $value->course_name,
+									'methods' => $value2->methods,
 									'kp' => $value->KP,
 									'id' => $value2->id,
 									'start_date' => $value2->start_date,

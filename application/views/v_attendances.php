@@ -73,6 +73,7 @@
                       <th>KP</th>
                       <th>Date</th>
                       <th>Time</th>
+                      <th>Abs. Methods</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -87,6 +88,7 @@
                         <td><?php echo $value['kp']; ?></td>
                         <td><?php echo strftime("%A, %d %B %Y", strtotime($value['start_date'])); ?></td>
                         <td><?php echo substr( $value['start_date'], -8); ?></td>
+                        <td><span class="badge badge-primary"><?php echo $value['methods']; ?></span></td>
                       </tr>
                     <?php } ?>
                   </tbody>

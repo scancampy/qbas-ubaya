@@ -77,4 +77,19 @@ class Api extends CI_Controller {
 			echo json_encode(array('result'=> false));
 		}
 	}
+
+	public function buttonattend() {
+		//echo json_encode(array('result'=> 'arrived'));
+
+		if($this->input->post('nrp')) {
+			$result = $this->attendances_model->buttonattend($this->input->post('nrp'));
+			if($result == false) {
+				echo json_encode(array('result'=> false));
+			} else {
+				echo json_encode(array('result' => true ));
+			}
+		} else {
+			echo json_encode(array('result'=> false));
+		}
+	}
 }
