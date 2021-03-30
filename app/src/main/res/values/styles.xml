@@ -35,6 +35,11 @@
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="heading" parent="TextAppearance.MaterialComponents.Headline1">
+        <item name="fontFamily">@font/montserrat_bold</item>
+        <item name="android:textSize">36sp</item>
+    </style>
+
     <style name="heading3" parent="TextAppearance.MaterialComponents.Headline3">
         <item name="fontFamily">@font/montserrat_bold</item>
         <item name="android:textSize">14sp</item>

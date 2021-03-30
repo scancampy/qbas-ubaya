@@ -148,6 +148,10 @@ class UpcomingFragment : Fragment() {
                         } else if(methods =="auto") {
                             v!!.findViewById<TextView>(R.id.txtInstruction).text =
                                 "Request QR code from QBAS web, and then use the app to scan QR to record your attendances"
+                        } else if(methods=="authenticator") {
+                            v!!.findViewById<TextView>(R.id.txtInstruction).text =
+                                "Please use the request code button to get the class code"
+                            btnRequestCode.visibility = View.VISIBLE
                         }
                     }
 
@@ -257,6 +261,11 @@ class UpcomingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        btnRequestCode.setOnClickListener {
+            ClassCodeDialogFragment.newInstance().show(activity!!.supportFragmentManager,"TAG")
+        }
+        
         checkAttend.setOnCheckedChangeListener { compoundButton, b ->
             btnAttend.isEnabled = b
         }

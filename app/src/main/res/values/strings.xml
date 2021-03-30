@@ -19,4 +19,9 @@
     <string name="name">Name</string>
     <string name="attend">Attend</string>
     <string name="attendstatement">I attended this course</string>
+    <string name="requestcode">Request Code</string>
+    <string name="classcode">Class Code</string>
+    <string name="copypasteclasscode">Enter this class code into QBAS website to record your attendances. Each code only last for 10 seconds. Use refresh code button to retrieve new code.</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="refreshcode">Refresh Code</string>
 </resources>
