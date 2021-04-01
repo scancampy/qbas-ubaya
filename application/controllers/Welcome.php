@@ -43,8 +43,16 @@ class Welcome extends CI_Controller {
 			$cek =  $this->student_model->doSignIn($this->input->post('snrp'), $this->input->post('password'));
 
 			if($cek == false) {
-				$this->session->set_flashdata('notif', 'login_false');
-				redirect('');
+				// if login failed, try login as lecturer
+				$ceklecturer = $this->lecturer_model->doSignIn($this->input->post('snrp'), $this->input->post('password'));
+
+				if($ceklecturer == false) {
+					$this->session->set_flashdata('notif', 'login_false');
+					redirect('');
+				} else {
+					$this->session->set_userdata('user', $ceklecturer);
+					redirect('Lecturer');
+				}
 			} else {
 				$this->session->set_userdata('user', $cek);
 				redirect('dashboard');

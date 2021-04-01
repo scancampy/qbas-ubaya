@@ -63,6 +63,19 @@ class Api extends CI_Controller {
 		}
 	}
 
+	public function requestauthcode() {
+		if($this->input->post('nrp')) {
+			$result= $this->attendances_model->requestAuthenticatorCode($this->input->post('nrp'));
+			if($result == false) {
+				echo json_encode(array('result'=> false));
+			} else {
+				echo json_encode(array('result' => true, 'code' => $result ));
+			}
+		} else {
+			echo json_encode(array('result'=> false));
+		}
+	}
+
 	public function checkqr() {
 		//echo json_encode(array('result'=> false));
 

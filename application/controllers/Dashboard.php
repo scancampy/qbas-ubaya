@@ -52,11 +52,74 @@ class Dashboard extends CI_Controller {
 
 	public function index() { 
 		$data = array();
+		$data['user'] = $this->session->userdata('user');
 
+		if($this->session->flashdata('notif') == 'success') {
+			$data['alert'] = "
+			    const Toast = Swal.mixin({
+			      toast: true,
+			      position: 'top-end',
+			      showConfirmButton: false,
+			      timer: 3000
+			    });
+
+			      Toast.fire({
+			        icon: 'success',
+			        title: 'Your attendances have been recorded successfully'
+			      });
+			   ";	
+		} else if($this->session->flashdata('notif') == 'failed') {
+			$data['alert'] = "
+			    const Toast = Swal.mixin({
+			      toast: true,
+			      position: 'top-end',
+			      showConfirmButton: false,
+			      timer: 3000
+			    });
+
+			      Toast.fire({
+			        icon: 'error',
+			        title: 'Invalid class codes. Unable to record attendances'
+			      });
+			   ";	
+		}
+
+		if($this->input->post('btnSubmit')) {
+			//echo $this->input->post('classcode');
+			if($this->attendances_model->checkAuthenticator($data['user']->nrp,  $this->input->post('classcode'))) {
+				$this->session->set_flashdata('notif', 'success');
+				redirect('dashboard');
+			} else {
+				$this->session->set_flashdata('notif', 'failed');
+				redirect('dashboard');
+			}
+		}
 		
 
-		$data['user'] = $this->session->userdata('user');
+		
 		$data['js'] = '
+		// Restricts input for the given textbox to the given inputFilter function.
+function setInputFilter(textbox, inputFilter) {
+  ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+    textbox.addEventListener(event, function() {
+      if (inputFilter(this.value)) {
+        this.oldValue = this.value;
+        this.oldSelectionStart = this.selectionStart;
+        this.oldSelectionEnd = this.selectionEnd;
+      } else if (this.hasOwnProperty("oldValue")) {
+        this.value = this.oldValue;
+        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+      } else {
+        this.value = "";
+      }
+    });
+  });
+}
+
+setInputFilter(document.getElementById("classcode"), function(value) {
+  return /^\d*\.?\d*$/.test(value); // Allow digits and '.' only, using a RegExp
+});
+
 		$(".btnqr").on("click", function() {
 			//alert("Tes");
 			var id = $(this).attr("attid");
@@ -98,6 +161,7 @@ setInterval(function () {
 		//$this->attendances_model->checkAttendances("s");
 		$data['upcoming'] = $this->attendances_model->checkAttendances($data['user']->nrp);
 		$data['current'] = $this->attendances_model->getCurrentClass($data['user']->nrp);
+		$data['absence'] = $this->attendances_model->getAbsenceCurrentClass($data['user']->nrp);
 
 		$this->load->view('v_header', $data);
 		$this->load->view('v_attendances', $data);

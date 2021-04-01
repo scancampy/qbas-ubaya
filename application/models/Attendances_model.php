@@ -31,6 +31,40 @@ class Attendances_model extends CI_Model {
 		}
 	}
 
+	public function requestAuthenticatorCode($nrp) {
+		$hasil = $this->getCurrentClass($nrp);
+
+		$cek = '';
+		if($hasil == false) {
+			return false;
+		} else {
+			foreach ($hasil as $key => $value) {
+				$id = $value['id'];
+				$this->db->reset_query();
+
+				$result = $this->db->get_where('absence', array('schedule_id' => $id, 'student_nrp' => $nrp, 'is_absence' => 0));
+
+				if($result->num_rows() >0) {
+					$hresult = $result->row();
+
+					if(time() > strtotime($hresult->authenticator_expired)  ) {
+						//expired bikin baru
+						$this->load->helper('string');
+						$newcode =  random_string('numeric', 5);
+						$data = array('authenticator_code' => $newcode,
+									  'authenticator_expired' => strftime("%Y-%m-%d %H:%M:%S", time() + 10));
+						$this->db->where(array('student_nrp' => $nrp, 'schedule_id' => $id));
+						$this->db->update('absence', $data);
+						$cek = $newcode;
+					} else {
+						$cek =  $hresult->authenticator_code;
+					}
+				}
+			}
+			return $cek;
+		}
+	}
+
 	public function getCurrentClass($nrp) {
 		$active = $this->db->get_where('semester', array('is_active' => 1));
 		$hactive = $active->row();
@@ -86,6 +120,40 @@ class Attendances_model extends CI_Model {
 			}
 
 			return $data;
+		}
+	}
+
+	public function checkAuthenticator($nrp, $codes) {
+		$hasil = $this->getCurrentClass($nrp);
+		//echo $hasil; die();
+		$cek = false;
+		if($hasil == false) {
+			return false;
+		} else {
+			foreach ($hasil as $key => $value) {
+				$id = $value['id'];
+				$this->db->reset_query();
+
+				$result = $this->db->get_where('absence', array('schedule_id' => $id, 'student_nrp' => $nrp, 'is_absence' => 0));
+
+
+				if($result->num_rows() >0) {
+					$hresult = $result->row();
+
+
+					if($hresult->authenticator_code == $codes) {
+						$data = array('absence_date' => date('Y-m-d H:i:s'), 'is_absence' => 1);
+						$this->db->where('id', $hresult->id);
+						$this->db->update('absence', $data);
+
+						$cek = true;
+					} else {
+						$cek = false;
+					}
+				}
+			}
+
+			return $cek;
 		}
 	}
 
