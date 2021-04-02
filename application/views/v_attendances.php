@@ -35,8 +35,8 @@
                   </ol>
                 <?php } else { ?>
                   <ol>
-                    <li>click on request QR code button</li>
-                    <li>scan shown QR with QBAS mobile app</li>
+                    <li>ask/wait lecturer to shows class QR</li>
+                    <li>scan shown QR with QBAS mobile app to record attendances</li>
                   </ol>
                 <?php } ?>
                 </div>

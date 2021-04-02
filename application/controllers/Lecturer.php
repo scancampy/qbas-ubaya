@@ -15,13 +15,12 @@ class Lecturer extends CI_Controller {
     }
 
     public function generateqr() {
-    	if($this->input->post('nnrp') == $this->session->userdata('user')->nrp) {
-    		$nrp = $this->input->post('nnrp');
+    	if($this->input->post('nid')) {
+    	//	$nrp = $this->input->post('nnrp');
     		$schedule_id = $this->input->post('nid');
-    		$course_open_id = $this->input->post('ncourse_open_id');
-    		$hash = $this->attendances_model->requestQR($nrp, $course_open_id, $schedule_id);
+    	//	$course_open_id = $this->input->post('ncourse_open_id');
+    		$hash = $this->lecturer_model->requestQR($schedule_id);
 
-    	
     		$this->load->library('ciqrcode'); //pemanggilan library QR CODE
  
 	        $config['cacheable']    = true; //boolean, the default is true
@@ -34,7 +33,7 @@ class Lecturer extends CI_Controller {
 	        $config['white']        = array(70,130,180); // array, default is array(0,0,0)
 	        $this->ciqrcode->initialize($config);
 	 
-	        $image_name=strtotime('now').$nrp.'.png'; //buat name dari qr code sesuai dengan nim
+	        $image_name=strtotime('now').$schedule_id.'.png'; //buat name dari qr code sesuai dengan nim
 	 
 	        $params['data'] = $hash; //data yang akan di jadikan QR CODE
 	        $params['level'] = 'H'; //H=High
@@ -98,42 +97,19 @@ class Lecturer extends CI_Controller {
 
 		
 		$data['js'] = '
-		// Restricts input for the given textbox to the given inputFilter function.
-function setInputFilter(textbox, inputFilter) {
-  ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
-    textbox.addEventListener(event, function() {
-      if (inputFilter(this.value)) {
-        this.oldValue = this.value;
-        this.oldSelectionStart = this.selectionStart;
-        this.oldSelectionEnd = this.selectionEnd;
-      } else if (this.hasOwnProperty("oldValue")) {
-        this.value = this.oldValue;
-        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
-      } else {
-        this.value = "";
-      }
-    });
-  });
-}
-
-setInputFilter(document.getElementById("classcode"), function(value) {
-  return /^\d*\.?\d*$/.test(value); // Allow digits and '.' only, using a RegExp
-});
+		
 
 		$(".btnqr").on("click", function() {
-			//alert("Tes");
 			var id = $(this).attr("attid");
-			var nrp = $(this).attr("attnrp");
-			var course_open_id = $(this).attr("attopenid");
-
-			$.post("'.base_url('dashboard/generateqr').'", {nid:id, nnrp:nrp, ncourse_open_id:course_open_id}, function(data) {
-				
+		
+			$.post("'.base_url('lecturer/generateqr').'", {nid:id}, function(data) {
+				//alert(data);
 				var obj = JSON.parse(data);
 				if(obj.result == true) {
 					var qr = obj.qr;
 					$("#qrimage").attr("src", "'.base_url('assets/images/').'" + qr);
 				}
-				//alert(data);
+				
 			});
 		});
 
@@ -160,8 +136,8 @@ setInterval(function () {
 }, 1000);';
 		//$this->attendances_model->checkAttendances("s");
 		$data['upcoming'] = $this->lecturer_model->upcomingClass($data['user']->npk);
-		$data['current'] = $this->attendances_model->getCurrentClass($data['user']->nrp);
-		$data['absence'] = $this->attendances_model->getAbsenceCurrentClass($data['user']->nrp);
+		$data['current'] = $this->lecturer_model->getCurrentClass($data['user']->npk);
+		//$data['absence'] = $this->attendances_model->getAbsenceCurrentClass($data['user']->nrp);
 
 		$this->load->view('v_header', $data);
 		$this->load->view('v_lecturer', $data);

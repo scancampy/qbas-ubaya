@@ -35,8 +35,9 @@
                   </ol>
                 <?php } else { ?>
                   <ol>
-                    <li>click on request QR code button</li>
-                    <li>scan shown QR with QBAS mobile app</li>
+                    <li>click on show QR button</li>
+                    <li>shows the QR code to student</li>
+                    <li>instruct student to scan shown QR with QBAS app</li>
                   </ol>
                 <?php } ?>
                 </div>
@@ -69,37 +70,14 @@
 
                  
                     <dd class="col-sm-8"><?php echo strftime("%A, %d %B %Y at %H:%M", strtotime($current[0]['start_date'])); ?> 
-                    <?php 
-                    if($absence[0] == 0) {
-                    $late = strtotime('now') - strtotime($current[0]['start_date']); 
-                    if($late > 0) { echo '('.(floor($late/60)).' minutes late)'; } 
-                    } ?></dd>
-
-                     <?php 
-                    if($absence[0] == 0) { ?>
- <dt class="col-sm-4">Attendances</dt>
-                      <dd class="col-sm-8"><span class="badge badge-danger"><i class="fas fa-exclamation-triangle"></i> Not Recorded</span>
-                        </dd>
-                      <?php  
-                      if($current[0]['methods'] == 'authenticator') { ?>
-                      <dt class="col-sm-4">Class Code</dt>
-                      <dd class="col-sm-8"><input type="text" class="form-control col-3" autofocus="autofocus" name="classcode" id="classcode" maxlength="5" /></dd>
-
-                      <dt class="col-sm-4">&nbsp;</dt>
-                      <dd class="col-sm-8"><input type="submit" class="btn btn-primary" name="btnSubmit" value="Submit"/></dd>
-
-
-                    <?php }
-                    } else { ?>
-                      <dt class="col-sm-4">Attendances</dt>
-                      <dd class="col-sm-8"><span class="badge badge-success"><i class="fas fa-thumbs-up"></i> Recorded</span>
-                        </dd>
-                    <?php } ?>
+                   </dd>
+                   <dt class="col-sm-4">Attendances</dt>
+                   <dd class="col-sm-8">3/25 (xx%) tambahi progress bar</dd>
                   </dl>
                 </div>
                 <div class="col-12">
-                  <?php if($current[0]['methods'] == 'auto') { ?>
-                  <button class="btn btn-primary btnqr" data-toggle="modal" data-target="#myModal" attid="<?php echo $current[0]['id']; ?>" attnrp="<?php echo $user->nrp; ?>" attopenid="<?php echo $current[0]['course_open_id']; ?>"> <i class="nav-icon fas fa-qrcode"></i> Request QR</button>
+                  <?php if($current[0]['methods'] == 'manual') { ?>
+                  <button class="btn btn-primary btnqr" data-toggle="modal" data-target="#myModal" attid="<?php echo $current[0]['id']; ?>" type="button"> <i class="nav-icon fas fa-qrcode"></i> Show QR</button>
                 <?php }  ?>
                 </div>
               </form>
@@ -162,7 +140,7 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title">Request QR Code</h4>
+              <h4 class="modal-title">Class QR Code</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>

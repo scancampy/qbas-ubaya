@@ -12,11 +12,67 @@ class Lecturer_model extends CI_Model {
 		}
 	}
 
+	public function getCurrentClass($npk) {
+		$active = $this->db->get_where('semester', array('is_active' => 1));
+		$hactive = $active->row();
+
+		$res = $this->db->query('SELECT course.*, course_open.id as `course_open_id`, course_open.KP FROM course, lecturer_course_open, course_open WHERE lecturer_course_open.lecturer_npk = "'.$npk.'" AND lecturer_course_open.course_open_id = course_open.id AND course_open.semester_id  = '.$hactive->id.' AND course_open.course_id = course.course_id;');
+
+		if($res->num_rows() > 0) {
+			$schedule = array();
+			foreach ($res->result() as $key => $value) {
+				//$schedule[$key]['course'] = $value;
+				$this->db->order_by('start_date', 'asc');
+				$sch = $this->db->query('SELECT * FROM `schedule` WHERE course_open_id ='.$value->course_open_id.' AND UNIX_TIMESTAMP() >= UNIX_TIMESTAMP(start_date)-900 AND UNIX_TIMESTAMP() <= UNIX_TIMESTAMP(end_date)');
+
+				if($sch->num_rows() >0) {
+					$value2 = $sch->row();
+					$schedule[] = array('course_open_id' => $value->course_open_id,
+									'course_id' => $value->course_id,
+									'course_name' => $value->course_name,
+									'kp' => $value->KP,
+									'methods' => $value2->methods,
+									'id' => $value2->id,
+									'start_date' => $value2->start_date,
+									'end_date' => $value2->end_date
+									);
+				}
+			}
+
+			return $schedule;
+		} else {
+			return false;
+		}
+	}
+
+	public function requestQR($schedule_id) {
+		$res = $this->db->get_where('schedule', array('id' => $schedule_id));
+
+		if($res->num_rows() >0) {
+			$hres = $res->row();
+
+			if(time() > strtotime($hres->class_code_expired)  ) {
+				// update qr
+				$hash = password_hash(date('Y-m-d H:i:s').$schedule_id, PASSWORD_DEFAULT);
+				$data = array('class_code' => $hash, 
+					'class_code_expired' => strftime("%Y-%m-%d %H:%M:%S", time() + 10));
+
+				$this->db->where('id', $hres->id);
+				$this->db->update('schedule', $data);
+				return $hash;
+			} else {
+				return $hres->class_code;
+			}
+		} else {
+			return false;
+		}
+	}
+
 	public function upcomingClass($npk) {
 		$active = $this->db->get_where('semester', array('is_active' => 1));
 		$hactive = $active->row();
 
-		$res = $this->db->query('SELECT course.*, course_open.id as `course_open_id` FROM course, lecturer_course_open, course_open WHERE lecturer_course_open.lecturer_npk = "'.$npk.'" AND lecturer_course_open.course_open_id = course_open.id AND course_open.semester_id  = 1 AND course_open.course_id = course.course_id;');
+		$res = $this->db->query('SELECT course.*, course_open.id as `course_open_id`, course_open.KP FROM course, lecturer_course_open, course_open WHERE lecturer_course_open.lecturer_npk = "'.$npk.'" AND lecturer_course_open.course_open_id = course_open.id AND course_open.semester_id  = '.$hactive->id.' AND course_open.course_id = course.course_id;');
 
 		if($res->num_rows() > 0) {
 			$schedule = array();
