@@ -152,6 +152,9 @@ class UpcomingFragment : Fragment() {
                             v!!.findViewById<TextView>(R.id.txtInstruction).text =
                                 "Please use the request code button to get the class code"
                             btnRequestCode.visibility = View.VISIBLE
+                        } else if(methods == "manual") {
+                            v!!.findViewById<TextView>(R.id.txtInstruction).text =
+                                "Scan QR codes that your lecturer show to record your attendances"
                         }
                     }
 
