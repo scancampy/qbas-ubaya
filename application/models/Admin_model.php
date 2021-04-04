@@ -7,6 +7,7 @@ class Admin_model extends CI_Model {
 
 		if($res->num_rows() > 0) {
 			$hres = $res->row();
+			
 			if(password_verify($password, $hres->password)) {
 				return $hres;
 			} else {

@@ -50,20 +50,23 @@ class Welcome extends CI_Controller {
 					// if login failed, try login as admin
 					$cekadmin = $this->admin_model->doSignIn($this->input->post('snrp'), $this->input->post('password'));
 
-					if($cekadmin == false) {
+					if($cekadmin == true) {
 						$this->session->set_userdata('user', $cekadmin);
+					    $this->session->set_userdata('menu_type', 'admin');
 						redirect('admin');
 					} else {
 						$this->session->set_flashdata('notif', 'login_false');
-					redirect('');
+						redirect('');
 					}
 					
 				} else {
 					$this->session->set_userdata('user', $ceklecturer);
+					$this->session->set_userdata('menu_type', 'lecturer');
 					redirect('Lecturer');
 				}
 			} else {
 				$this->session->set_userdata('user', $cek);
+					$this->session->set_userdata('menu_type', 'student');
 				redirect('dashboard');
 			}
 		}

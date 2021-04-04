@@ -66,13 +66,39 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-        
-          <li class="nav-header">MENU</li>
+                <li class="nav-header">MENU</li>
+
+                <?php if(@$menu_type =='admin') { ?>
+        <li class="nav-item has-treeview menu-open">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-tags"></i>
+              <p>
+                Master
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview" >
+              <li class="nav-item">
+                <a href="<?php echo base_url('admin/semester'); ?>" class="nav-link <?php if ($this->uri->segment(2) == 'semester') { echo 'active';  } ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Master Semester</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?php echo base_url('admin/course'); ?>" class="nav-link <?php if ($this->uri->segment(2) == 'course') { echo 'active';  } ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Master Course</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+        <?php } else { ?>
+         
           <li class="nav-item">
             <a href="<?php echo base_url('dashboard'); ?>" class="nav-link active">
               <i class="nav-icon fas fa-user-check"></i>
               <p>
-                Attendaces
+                Attendances
               </p>
             </a>
           </li>
@@ -84,6 +110,7 @@
               </p>
             </a>
           </li>
+        <?php } ?>
           <li class="nav-item">
             <a href="<?php echo base_url('dashboard/signout'); ?>" class="nav-link">
               <i class="nav-icon fas fa-sign-out-alt"></i>
