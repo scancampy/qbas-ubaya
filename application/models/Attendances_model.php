@@ -197,22 +197,44 @@ class Attendances_model extends CI_Model {
 				$id = $value['id'];
 				$this->db->reset_query();
 
-				$result = $this->db->get_where('absence', array('schedule_id' => $id, 'student_nrp' => $nrp, 'qr_code' => $qr));
-				//echo $this->db->last_query();
+				if($value['methods'] == 'manual') {
+					$result = $this->db->get_where('schedule', array('id' => $id, 'class_code' => $qr));
 
-				if($result->num_rows() >0) {
-					$hresult = $result->row();
+					if($result->num_rows() >0) {
+						$hresult = $result->row();
 
-					$data = array('absence_date' => date('Y-m-d H:i:s'), 'is_absence' => 1);
-					$this->db->where('id', $hresult->id);
-					$this->db->update('absence', $data);
+						$data = array('absence_date' => date('Y-m-d H:i:s'), 'is_absence' => 1);
+						$this->db->where('schedule_id', $id);
+						$this->db->where('student_nrp', $nrp);
+						$this->db->update('absence', $data);
 
-					$cek = true;
-				}
+						$cek = true;
+					}
+
+				} else if($value['methods'] == 'auto') {
+					$result = $this->db->get_where('absence', array('schedule_id' => $id, 'student_nrp' => $nrp, 'qr_code' => $qr));
+					//echo $this->db->last_query();
+
+					if($result->num_rows() >0) {
+						$hresult = $result->row();
+
+						$data = array('absence_date' => date('Y-m-d H:i:s'), 'is_absence' => 1);
+						$this->db->where('id', $hresult->id);
+						$this->db->update('absence', $data);
+
+						$cek = true;
+					}
+				}				
 			}
 
 			return $cek;
 		}
+	}
+
+	public function getAttendances($course_open_id, $schedule_id) {
+		$q = $this->db->query("SELECT student.nrp, student.full_name, absence.absence_date FROM absence 
+			INNER JOIN student ON student.nrp = absence.student_nrp WHERE absence.course_open_id = $course_open_id AND absence.schedule_id = $schedule_id ORDER BY student.nrp ASC;");
+		return $q->result();
 	}
 
 	public function checkAttendances($nrp) {

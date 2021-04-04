@@ -72,7 +72,11 @@
                     <dd class="col-sm-8"><?php echo strftime("%A, %d %B %Y at %H:%M", strtotime($current[0]['start_date'])); ?> 
                    </dd>
                    <dt class="col-sm-4">Attendances</dt>
-                   <dd class="col-sm-8">3/25 (xx%) tambahi progress bar</dd>
+                   <dd class="col-sm-8">
+<?php if(isset($absence)) { 
+  $persen = number_format((count($absence)/count($studentlist))*100, 2,',','.');
+  echo count($absence).'/'.count($studentlist).' ('.$persen.'%)'; } ?>
+                   </dd>
                   </dl>
                 </div>
                 <div class="col-12">

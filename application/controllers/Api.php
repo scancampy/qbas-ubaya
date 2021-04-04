@@ -78,6 +78,7 @@ class Api extends CI_Controller {
 
 	public function checkqr() {
 		//echo json_encode(array('result'=> false));
+//$result = $this->attendances_model->checkQR("160417075", "453535");
 
 		if($this->input->post('qr')) {
 			$result = $this->attendances_model->checkQR($this->input->post('nrp'), $this->input->post('qr'));

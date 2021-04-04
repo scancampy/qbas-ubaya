@@ -98,19 +98,36 @@ class Lecturer extends CI_Controller {
 		
 		$data['js'] = '
 		
+		$("#myModal").on("hide.bs.modal", function(){
+		  clearInterval();
+		});
 
 		$(".btnqr").on("click", function() {
 			var id = $(this).attr("attid");
+
+			setInterval(function(){ 
+				$.post("'.base_url('lecturer/generateqr').'", {nid:id}, function(data) {
+					//alert(data);
+					var obj = JSON.parse(data);
+					if(obj.result == true) {
+						var qr = obj.qr;
+						$("#qrimage").attr("src", "'.base_url('assets/images/').'" + qr);
+					}
+					
+				});
+			 }, 3000);
+
+			 $.post("'.base_url('lecturer/generateqr').'", {nid:id}, function(data) {
+					//alert(data);
+					var obj = JSON.parse(data);
+					if(obj.result == true) {
+						var qr = obj.qr;
+						$("#qrimage").attr("src", "'.base_url('assets/images/').'" + qr);
+					}
+					
+				});
 		
-			$.post("'.base_url('lecturer/generateqr').'", {nid:id}, function(data) {
-				//alert(data);
-				var obj = JSON.parse(data);
-				if(obj.result == true) {
-					var qr = obj.qr;
-					$("#qrimage").attr("src", "'.base_url('assets/images/').'" + qr);
-				}
-				
-			});
+			
 		});
 
 		var serverTime = '.time().'; 
@@ -137,8 +154,13 @@ setInterval(function () {
 		//$this->attendances_model->checkAttendances("s");
 		$data['upcoming'] = $this->lecturer_model->upcomingClass($data['user']->npk);
 		$data['current'] = $this->lecturer_model->getCurrentClass($data['user']->npk);
-		//$data['absence'] = $this->attendances_model->getAbsenceCurrentClass($data['user']->nrp);
 
+		foreach ($data['current'] as $key => $value) {
+			$data['absence'] = $this->attendances_model->getAttendances($value['course_open_id'], $value['id']);
+			$data['studentlist'] = $this->course_model->getStudentList($value['course_open_id']);
+			break;
+		}
+		
 		$this->load->view('v_header', $data);
 		$this->load->view('v_lecturer', $data);
 		$this->load->view('v_footer', $data);
