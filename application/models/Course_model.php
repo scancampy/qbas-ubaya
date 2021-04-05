@@ -11,8 +11,8 @@ class Course_model extends CI_Model {
 
 	public function getCourse($course_id = null, $where = null) {
 
-		if($id != null) {
-			$this->db->where('course_id', $id);
+		if($course_id != null) {
+			$this->db->where('course_id', $course_id);
 		}
 		if($where != null) {
 			$this->db->where($where);
@@ -22,31 +22,29 @@ class Course_model extends CI_Model {
 		return $result->result();
 	}
 
-	public function addSemester($semester_name, $is_active) {
-		if($is_active == 1) {
-			$data = array('is_active' => 0);
-			$this->db->update('semester', $data);
-		}
+	public function addCourse($course_id, $course_name, $course_short_name) {
+		// cek course id
+		$q = $this->db->get_where('course', array('course_id' => $course_id));
 
-		$data = array('semester_name' => $semester_name, 'is_active' => $is_active);
-		$this->db->insert('semester', $data);
+		if($q->num_rows() == 0) {
+			$data = array('course_id' => $course_id, 'course_name' => $course_name, 'course_short_name' => $course_short_name);
+			$this->db->insert('course', $data);
+			return 'success';
+		} else {
+			return 'course_id exists';
+		}
 	}
 
 
-	public function editSemester($id, $semester_name, $is_active) {
-		if($is_active == 1) {
-			$data = array('is_active' => 0);
-			$this->db->update('semester', $data);
-		}
-
-		$data = array('semester_name' => $semester_name, 'is_active' => $is_active);
-		$this->db->where('id', $id);
-		$this->db->update('semester', $data);
+	public function editCourse($course_id,$course_name, $course_short_name) {
+		$data = array('course_name' => $course_name, 'course_short_name' => $course_short_name);
+		$this->db->where('course_id', $course_id);
+		$this->db->update('course', $data);
 	}
 
-	public function delSemester($id) {
-		$this->db->where('id', $id);
-		$this->db->update('semester', array('is_deleted' => 1));
+	public function delCourse($course_id) {
+		$this->db->where('course_id', $course_id);
+		$this->db->update('course', array('is_deleted' => 1));
 	}
 }
 ?>

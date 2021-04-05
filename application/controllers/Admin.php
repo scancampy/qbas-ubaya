@@ -24,6 +24,12 @@ class Admin extends CI_Controller {
     	}
     }
 
+    public function delsemester($id) {
+		$this->semester_model->delSemester($id);
+		$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'Semester have been deleted'));
+		redirect('admin/semester');
+	}
+
     public function semester() {
     	$data = array();
 		$data['js'] ='
@@ -106,40 +112,46 @@ class Admin extends CI_Controller {
 	// COURSE
     public function jsongetcourse() {
     	if($this->input->post('sentid')) {
-    		$result = $this->semester_model->getSemester($this->input->post('sentid'));
+    		$result = $this->course_model->getCourse($this->input->post('sentid'));
     		echo json_encode(array('result' => 'success', 'data' => $result));
     	} else {
     		echo json_encode(array('result' => 'failed'));
     	}
     }
 
+    public function delcourse($id) {
+		$this->course_model->delCourse($id);
+		$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'Course have been deleted'));
+		redirect('admin/course');
+	}
+
     public function course() {
     	$data = array();
 		$data['js'] ='
-		$("#btnaddsemester").on("click", function() {
+		$("#btnaddcourse").on("click", function() {
 			$("#hiddenid").val("");
-			$("#semester_name").val("");	
-			$("#inactive_semester").prop("checked", true);
-			$("#active_semester").prop("checked", false);
+			$("#course_name").val("");
+			$("#course_id").val("");
+			$("#course_short_name").val("");
+			$("#course_id").prop("disabled", false);
 		});
 
-		$("body").on("click",".semesteredit", function() {
-			var id = $(this).attr("semesterid");
-		    $.post("'.base_url('admin/jsongetsemester').'", { sentid: id}, function(data){ 
+		$("body").on("click",".courseedit", function() {
+			var id = $(this).attr("courseid");
+		    $.post("'.base_url('admin/jsongetcourse').'", { sentid: id}, function(data){ 
+		    	
 				var obj = JSON.parse(data);
-				var sn = obj.data[0].semester_name;
-				var id = obj.data[0].id;
-				var ia = obj.data[0].is_active;
+				var cn = obj.data[0].course_name;
+				var id = obj.data[0].course_id;
+				var sn = obj.data[0].course_short_name;
+
 				$("#hiddenid").val(id);
-				$("#semester_name").val(sn);
-
-				if(obj.data[0].is_active == 1) {
-					$("#active_semester").prop( "checked", true );
-				} else {
-					$("#inactive_semester").prop( "checked", true );
-				}
-
-				$("#modalAddSemester").modal();
+				$("#course_name").val(cn);
+				$("#course_id").val(id);
+				$("#course_short_name").val(sn);
+				$("#course_id").prop("disabled", true);
+				
+				$("#modalAddCourse").modal();
 			})
 		});';
 
@@ -151,14 +163,19 @@ class Admin extends CI_Controller {
 
 		if($this->input->post('btnSubmit')) {
 			if($this->input->post('hiddenid')) {
-				$this->semester_model->editSemester($this->input->post('hiddenid'), $this->input->post('semester_name'), $this->input->post('is_active'));
-				$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'Semester have been updated'));
+				$this->course_model->editCourse($this->input->post('hiddenid'), $this->input->post('course_name'), $this->input->post('course_short_name'));
+				$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'Course have been updated'));
 			} else {
-				$this->semester_model->addSemester($this->input->post('semester_name'), $this->input->post('is_active'));
-				$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'New semester have been added'));
+				$result = $this->course_model->addCourse($this->input->post('course_id'), $this->input->post('course_name'), $this->input->post('course_short_name'));
+
+				if($result =='success') {
+					$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'New course have been added'));
+				} else if($result =='course_id exists') {
+					$this->session->set_flashdata('notif', array('type' => 'failed', 'msg' => 'Course ID already exist. Please check again'));
+				}
 			}
 			
-			redirect('admin/semester');
+			redirect('admin/course');
 		}
 
 		$data['user'] = $this->session->userdata('user');
@@ -179,6 +196,18 @@ class Admin extends CI_Controller {
 				        icon: "success",
 				        title: "'.$notif['msg'].'"
 				      });';
+			} else if($notif['type'] == 'failed') {
+				$data['js'] .= '
+				const Toast = Swal.mixin({
+				      toast: true,
+				      position: "top-end",
+				      showConfirmButton: false,
+				      timer: 3000
+				    });
+				    Toast.fire({
+				        icon: "warning",
+				        title: "'.$notif['msg'].'"
+				      });';
 			}
 		}
 
@@ -192,6 +221,226 @@ class Admin extends CI_Controller {
 
     }
 	/// END OF COURSE
+
+	// STUDENT
+    public function jsongetstudent() {
+    	if($this->input->post('sentid')) {
+    		$result = $this->student_model->getStudents($this->input->post('sentid'));
+    		echo json_encode(array('result' => 'success', 'data' => $result));
+    	} else {
+    		echo json_encode(array('result' => 'failed'));
+    	}
+    }
+
+    public function delstudent($nrp) {
+		$this->student_model->delStudent($nrp);
+		$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'Student have been deleted'));
+		redirect('admin/student');
+	}
+
+    public function student() {
+    	$data = array();
+		$data['js'] ='
+		$("#btnaddstudent").on("click", function() {
+			$("#hiddenid").val("");
+			$("#student_name").val("");
+			$("#nrp").val("");
+			$("#nrp").prop("disabled", false);
+		});
+
+		$("body").on("click",".studentedit", function() {
+			var id = $(this).attr("studentid");
+		    $.post("'.base_url('admin/jsongetstudent').'", { sentid: id}, function(data){ 
+		    	
+				var obj = JSON.parse(data);
+				var fn = obj.data[0].full_name;
+				var id = obj.data[0].nrp;
+
+				$("#hiddenid").val(id);
+				$("#student_name").val(fn);
+				$("#nrp").val(id);
+				$("#nrp").prop("disabled", true);
+				
+				$("#modalAddStudent").modal();
+			})
+		});';
+
+		// handle data table
+		$data['js'] .= ' $("#tablearticle").DataTable({
+		      "responsive": true,
+		      "autoWidth": false,
+		    });';
+
+		if($this->input->post('btnSubmit')) {
+			if($this->input->post('hiddenid')) {
+				$this->student_model->editStudent($this->input->post('hiddenid'), $this->input->post('student_name'));
+				$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'Student have been updated'));
+			} else {
+				$result = $this->student_model->addStudent($this->input->post('nrp'), $this->input->post('student_name'));
+
+				if($result =='success') {
+					$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'New student have been added'));
+				} else if($result =='course_id exists') {
+					$this->session->set_flashdata('notif', array('type' => 'failed', 'msg' => 'NRP already exist. Please check again'));
+				}
+			}
+			
+			redirect('admin/student');
+		}
+
+		$data['user'] = $this->session->userdata('user');
+		$data['menu_type'] = $this->session->userdata('menu_type');	
+
+		// notif
+		if($this->session->flashdata('notif')) {
+			$notif = $this->session->flashdata('notif');
+			if($notif['type'] == 'success') {
+				$data['js'] .= '
+				const Toast = Swal.mixin({
+				      toast: true,
+				      position: "top-end",
+				      showConfirmButton: false,
+				      timer: 3000
+				    });
+				    Toast.fire({
+				        icon: "success",
+				        title: "'.$notif['msg'].'"
+				      });';
+			} else if($notif['type'] == 'failed') {
+				$data['js'] .= '
+				const Toast = Swal.mixin({
+				      toast: true,
+				      position: "top-end",
+				      showConfirmButton: false,
+				      timer: 3000
+				    });
+				    Toast.fire({
+				        icon: "warning",
+				        title: "'.$notif['msg'].'"
+				      });';
+			}
+		}
+
+		$data['name'] = $this->session->userdata('user')->full_name;
+		$data['title'] = "Master Student";
+		$data['student'] = $this->student_model->getStudents(null, array('is_deleted' => 0));
+
+		$this->load->view('v_header', $data);
+		$this->load->view('v_master_student', $data);
+		$this->load->view('v_footer', $data);
+
+    }
+	/// END OF STUDENT
+
+	// LECTURER
+    public function jsongetlecturer() {
+    	if($this->input->post('sentid')) {
+    		$result = $this->lecturer_model->getLecturer($this->input->post('sentid'));
+    		echo json_encode(array('result' => 'success', 'data' => $result));
+    	} else {
+    		echo json_encode(array('result' => 'failed'));
+    	}
+    }
+
+    public function dellecturer($npk) {
+		$this->student_model->delStudent($npk);
+		$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'Lecturer have been deleted'));
+		redirect('admin/lecturer');
+	}
+
+    public function lecturer() {
+    	$data = array();
+		$data['js'] ='
+		$("#btnaddstudent").on("click", function() {
+			$("#hiddenid").val("");
+			$("#student_name").val("");
+			$("#nrp").val("");
+			$("#nrp").prop("disabled", false);
+		});
+
+		$("body").on("click",".studentedit", function() {
+			var id = $(this).attr("studentid");
+		    $.post("'.base_url('admin/jsongetstudent').'", { sentid: id}, function(data){ 
+		    	
+				var obj = JSON.parse(data);
+				var fn = obj.data[0].full_name;
+				var id = obj.data[0].nrp;
+
+				$("#hiddenid").val(id);
+				$("#student_name").val(fn);
+				$("#nrp").val(id);
+				$("#nrp").prop("disabled", true);
+				
+				$("#modalAddStudent").modal();
+			})
+		});';
+
+		// handle data table
+		$data['js'] .= ' $("#tablearticle").DataTable({
+		      "responsive": true,
+		      "autoWidth": false,
+		    });';
+
+		if($this->input->post('btnSubmit')) {
+			if($this->input->post('hiddenid')) {
+				$this->lecturer_model->editLecturer($this->input->post('hiddenid'), $this->input->post('full_name'));
+				$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'Lecturer have been updated'));
+			} else {
+				$result = $this->lecturer_model->addLecturer($this->input->post('npk'), $this->input->post('full_name'));
+
+				if($result =='success') {
+					$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'New lecturer have been added'));
+				} else if($result =='npk exists') {
+					$this->session->set_flashdata('notif', array('type' => 'failed', 'msg' => 'NPK already exist. Please check again'));
+				}
+			}
+			
+			redirect('admin/lecturer');
+		}
+
+		$data['user'] = $this->session->userdata('user');
+		$data['menu_type'] = $this->session->userdata('menu_type');	
+
+		// notif
+		if($this->session->flashdata('notif')) {
+			$notif = $this->session->flashdata('notif');
+			if($notif['type'] == 'success') {
+				$data['js'] .= '
+				const Toast = Swal.mixin({
+				      toast: true,
+				      position: "top-end",
+				      showConfirmButton: false,
+				      timer: 3000
+				    });
+				    Toast.fire({
+				        icon: "success",
+				        title: "'.$notif['msg'].'"
+				      });';
+			} else if($notif['type'] == 'failed') {
+				$data['js'] .= '
+				const Toast = Swal.mixin({
+				      toast: true,
+				      position: "top-end",
+				      showConfirmButton: false,
+				      timer: 3000
+				    });
+				    Toast.fire({
+				        icon: "warning",
+				        title: "'.$notif['msg'].'"
+				      });';
+			}
+		}
+
+		$data['name'] = $this->session->userdata('user')->full_name;
+		$data['title'] = "Master Lecturer";
+		$data['lecturer'] = $this->lecturer_model->getLecturer(null, array('is_deleted' => 0));
+
+		$this->load->view('v_header', $data);
+		$this->load->view('v_master_lecturer', $data);
+		$this->load->view('v_footer', $data);
+
+    }
+	/// END OF LECTURER
 
    
 	public function index() { 
@@ -268,10 +517,7 @@ setInterval(function () {
 		$this->load->view('v_footer', $data);
 	}
 
-	public function delsemester($id) {
-		$this->semester_model->delSemester($id);
-		redirect('admin/semester');
-	}
+	
 
 	public function signout() {
 		$this->session->sess_destroy();

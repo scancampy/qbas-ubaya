@@ -90,6 +90,18 @@
                   <p>Master Course</p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="<?php echo base_url('admin/student'); ?>" class="nav-link <?php if ($this->uri->segment(2) == 'student') { echo 'active';  } ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Master Student</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?php echo base_url('admin/lecturer'); ?>" class="nav-link <?php if ($this->uri->segment(2) == 'lecturer') { echo 'active';  } ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Master Lecturer</p>
+                </a>
+              </li>
             </ul>
           </li>
         <?php } else { ?>

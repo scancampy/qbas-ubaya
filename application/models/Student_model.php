@@ -12,6 +12,18 @@ class Student_model extends CI_Model {
 		}
 	}
 
+	public function getStudents($nrp = null, $where = null) {
+		if($nrp != null) {
+			$this->db->where('nrp', $nrp);
+		}
+		if($where != null) {
+			$this->db->where($where);
+		}
+
+		$result = $this->db->get('student');
+		return $result->result();
+	}
+
 	public function doSignIn($nrp, $password) {
 		$newNrp = substr($nrp, 1);
 		$res = $this->db->get_where('student', array('nrp' => $newNrp));
@@ -28,6 +40,30 @@ class Student_model extends CI_Model {
 		} else {
 			return false;
 		}
+	}
+
+	public function addStudent($nrp, $student_name) {
+		$q = $this->db->get_where('student', array('nrp' => $nrp));
+
+		if($q->num_rows() == 0) {
+			$data = array('nrp' => $nrp, 'full_name' => $student_name);
+			$this->db->insert('student', $data);
+			return 'success';
+		} else {
+			return 'nrp exists';
+		}
+	}
+
+
+	public function editStudent($nrp,$student_name) {
+		$data = array('full_name' => $student_name);
+		$this->db->where('nrp', $nrp);
+		$this->db->update('student', $data);
+	}
+
+	public function delStudent($nrp) {
+		$this->db->where('nrp', $nrp);
+		$this->db->update('student', array('is_deleted' => 1));
 	}
 
 }

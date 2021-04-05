@@ -12,6 +12,42 @@ class Lecturer_model extends CI_Model {
 		}
 	}
 
+	public function getLecturer($npk = null, $where = null) {
+		if($nrp != null) {
+			$this->db->where('npk', $nrp);
+		}
+		if($where != null) {
+			$this->db->where($where);
+		}
+
+		$result = $this->db->get('lecturer');
+		return $result->result();
+	}
+
+	public function addLecturer($npk, $full_name) {
+		$q = $this->db->get_where('lecturer', array('npk' => $npk));
+
+		if($q->num_rows() == 0) {
+			$data = array('npk' => $npk, 'full_name' => $full_name);
+			$this->db->insert('lecturer', $data);
+			return 'success';
+		} else {
+			return 'npk exists';
+		}
+	}
+
+
+	public function editLecturer($npk,$full_name) {
+		$data = array('full_name' => $full_name);
+		$this->db->where('npk', $npk);
+		$this->db->update('lecturer', $data);
+	}
+
+	public function delLecturer($npk) {
+		$this->db->where('npk', $npk);
+		$this->db->update('lecturer', array('is_deleted' => 1));
+	}
+
 	public function getCurrentClass($npk) {
 		$active = $this->db->get_where('semester', array('is_active' => 1));
 		$hactive = $active->row();
