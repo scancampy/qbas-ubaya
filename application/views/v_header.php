@@ -104,6 +104,14 @@
               </li>
             </ul>
           </li>
+          <li class="nav-item">
+            <a href="<?php echo base_url('admin/manageclass'); ?>" class="nav-link <?php if ($this->uri->segment(2) == 'manageclass') { echo 'active';  } ?>">
+              <i class="nav-icon fas fa-clipboard-list"></i>
+              <p>
+                Manage Class
+              </p>
+            </a>
+          </li>
         <?php } else { ?>
          
           <li class="nav-item">

@@ -46,5 +46,11 @@ class Course_model extends CI_Model {
 		$this->db->where('course_id', $course_id);
 		$this->db->update('course', array('is_deleted' => 1));
 	}
+
+	public function getCourseOpen($semester_id) {
+		$q = $this->db->query("SELECT course.*, course_open.KP, course_open.id FROM course_open 
+			INNER JOIN course ON course.course_id = course_open.course_id WHERE course_open.semester_id=$semester_id");
+		return $q->result();
+	}
 }
 ?>

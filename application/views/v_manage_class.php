@@ -10,7 +10,6 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="<?php echo base_url('admin'); ?>">Home</a></li>
-               <li class="breadcrumb-item ">Master</li>
               <li class="breadcrumb-item active"><?php echo $title; ?></li>
             </ol>
           </div>
@@ -26,9 +25,18 @@
             
             <div class="card">
               <div class="card-header d-flex p-0">
-                <h3 class="card-title p-3">Manage Lecturer Data</h3>
+                <h3 class="card-title p-3">Manage Class</h3>
                 <div class="ml-auto p-3">
-                  <a href="#" data-toggle="modal" data-target="#modalAddLecturer" id="btnaddlecturer" class="btn btn-primary btn-xs"><i class="nav-icon fas fa-plus"></i> Add New Lecturer</a>
+                  <form method="get" id="formsemester" action="<?php echo base_url('admin/manageclass'); ?>">
+                     <div class="form-group">
+                      <select class="form-control" id="selectsemester" name="sem">
+                        <option value="-">Choose Semester</option>
+                        <?php foreach ($semester as $key => $value) { ?>
+                          <option value="<?php echo $value->id; ?>" <?php if($this->input->get('sem') == $value->id) { echo 'selected'; } ?>><?php echo $value->semester_name; ?><?php if($value->is_active==1) { echo ' (active)'; } ?></option>
+                        <?php } ?>
+                      </select>
+                     </div>
+                  </form>
                 </div>
               </div>
               <!-- /.card-header -->
@@ -37,22 +45,29 @@
                   <thead>
                   <tr>
                     <th>No</th>
-                    <th>NPK</th>
-                    <th>Lecturer Name</th>
+                    <th>Course ID</th>
+                    <th>Course Name</th>
+                    <th>KP</th>
                     <th>Actions</th>
                   </tr>
                   </thead>
                   <tbody>
 
                    <?php 
-                   foreach ($lecturer as $key => $value) { ?>
+                   foreach ($course_open as $key => $value) { ?>
                     <tr>
                       <td><?php echo $key+1; ?></td>
-                      <td><?php echo $value->npk; ?></td>
-                      <td><?php echo $value->full_name; ?></td>
+                      <td><?php echo $value->course_id; ?></td>
+                      <td><?php echo $value->course_name; ?></td>
+                      <td><?php echo $value->KP; ?></td>
                       <td class="d-flex justify-content-end">
-                        <a href="#" lecturerid="<?php echo $value->npk; ?>" class="btn btn-xs btn-primary mr-1 lectureredit"><i class="nav-icon fas fa-edit"></i> Edit</a> 
-                        <a href="<?php echo base_url('admin/dellecturer/'.$value->npk); ?>" onclick="return confirm('Are you sure want to delete <?php echo $value->full_name; ?>?');" class="btn btn-xs btn-danger m-0"><i class="nav-icon fas fa-trash"></i> Delete</a></td>
+                        <a href="#" courseopenid="<?php echo $value->id; ?>" class="btn btn-xs btn-primary mr-1 lectureredit"><i class="nav-icon fas fa-chalkboard-teacher"></i> Lecturer</a>
+
+                        <a href="<?php echo base_url('admin/enroll/'.$value->id); ?>" class="btn btn-xs btn-primary mr-1 "><i class="nav-icon fas fa-user-graduate"></i> Enroll</a>
+
+                        <a href="<?php echo base_url('admin/schedule/'.$value->id); ?>" class="btn btn-xs btn-primary mr-1"><i class="nav-icon fas fa-calendar-alt"></i> Schedule</a>                        
+
+                        <a href="<?php echo base_url('admin/delcourseopen/'.$value->id); ?>" onclick="return confirm('Are you sure want to delete <?php echo $value->course_id.' KP '.$value->KP; ?>?');" class="btn btn-xs btn-danger m-0"><i class="nav-icon fas fa-trash"></i> Delete</a></td>
                     </tr>
                    <?php }
                    ?>
@@ -60,8 +75,9 @@
                   <tfoot>
                    <tr>
                     <th>No</th>
-                    <th>NPK</th>
-                    <th>Lecturer Name</th>
+                    <th>Course ID</th>
+                    <th>Course Name</th>
+                    <th>KP</th>
                     <th>Actions</th>
                   </tr>
                   </tfoot>

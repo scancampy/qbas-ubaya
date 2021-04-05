@@ -12,9 +12,9 @@ class Lecturer_model extends CI_Model {
 		}
 	}
 
-	public function getLecturer($npk = null, $where = null) {
+	public function getLecturer($nrp = null, $where = null) {
 		if($nrp != null) {
-			$this->db->where('npk', $nrp);
+			$this->db->where('nrp', $nrp);
 		}
 		if($where != null) {
 			$this->db->where($where);

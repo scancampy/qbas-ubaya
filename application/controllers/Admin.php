@@ -343,7 +343,7 @@ class Admin extends CI_Controller {
     }
 
     public function dellecturer($npk) {
-		$this->student_model->delStudent($npk);
+		$this->lecturer_model->delLecturer($npk);
 		$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'Lecturer have been deleted'));
 		redirect('admin/lecturer');
 	}
@@ -442,7 +442,67 @@ class Admin extends CI_Controller {
     }
 	/// END OF LECTURER
 
-   
+    // START OF MANAGE CLASS
+    public function manageclass() {
+    	$data = array();
+		$data['user'] = $this->session->userdata('user');
+		$data['menu_type'] = $this->session->userdata('menu_type');
+		$data['js'] = '
+		$("#selectsemester").on("change", function() {
+			$("#formsemester").submit();
+		});
+		';
+
+		// handle data table
+		$data['js'] .= ' $("#tablearticle").DataTable({
+		      "responsive": true,
+		      "autoWidth": false,
+		    });';
+
+		if($this->session->flashdata('notif') == 'success') {
+			$data['alert'] = "
+			    const Toast = Swal.mixin({
+			      toast: true,
+			      position: 'top-end',
+			      showConfirmButton: false,
+			      timer: 3000
+			    });
+
+			      Toast.fire({
+			        icon: 'success',
+			        title: 'Your attendances have been recorded successfully'
+			      });
+			   ";	
+		} else if($this->session->flashdata('notif') == 'failed') {
+			$data['alert'] = "
+			    const Toast = Swal.mixin({
+			      toast: true,
+			      position: 'top-end',
+			      showConfirmButton: false,
+			      timer: 3000
+			    });
+
+			      Toast.fire({
+			        icon: 'error',
+			        title: 'Invalid class codes. Unable to record attendances'
+			      });
+			   ";	
+		}
+
+		$data['name'] = $this->session->userdata('user')->full_name;
+		$data['title'] = "Manage Class";
+		$data['semester'] = $this->semester_model->getSemester(null, array('is_deleted' => 0));
+
+		if($this->input->get('sem')) {
+			$data['course_open'] = $this->course_model->getCourseOpen($this->input->get('sem'));
+		}
+
+		$this->load->view('v_header', $data);
+		$this->load->view('v_manage_class', $data);
+		$this->load->view('v_footer', $data);
+    }
+    // END OF MANAGE CLASS
+
 	public function index() { 
 		$data = array();
 		$data['user'] = $this->session->userdata('user');
