@@ -372,7 +372,7 @@ class Admin extends CI_Controller {
 				$("#nrp").prop("disabled", true);
 				
 				$("#modalAddStudent").modal();
-			})
+			});
 		});';
 
 		// handle data table
@@ -443,6 +443,24 @@ class Admin extends CI_Controller {
 	/// END OF LECTURER
 
     // START OF MANAGE CLASS
+    public function delcourseopen($sem, $id) {
+    	$this->course_model->delCourseOpen($sem, $id);
+    	$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'Class have been deleted'));
+    	redirect('admin/manageclass?sem='.$sem);
+    }
+
+    public function jsongetcourseopen() {
+    	if($this->input->post('sentid')) {
+    		$result = $this->course_model->getCourseOpen(null, $this->input->post('sentid'));
+    		$lecturer = $this->course_model->getLecturerList(null,  $this->input->post('sentid'));
+    		
+
+    		echo json_encode(array('result' => 'success', 'data' => $result, 'lecturer' => $lecturer));
+    	} else {
+    		echo json_encode(array('result' => 'failed'));
+    	}
+    }
+
     public function manageclass() {
     	$data = array();
 		$data['user'] = $this->session->userdata('user');
@@ -451,7 +469,83 @@ class Admin extends CI_Controller {
 		$("#selectsemester").on("change", function() {
 			$("#formsemester").submit();
 		});
+
+		$("body").on("click", ".dellecturer", function() {
+			$(this).parent().parent().remove();
+		});
+
+		var numlecturer =0;
+
+		$("body").on("click", ".lectureredit", function() {
+			var id = $(this).attr("courseopenid");
+		    $.post("'.base_url('admin/jsongetcourseopen').'", { sentid: id}, function(data){ 
+		    	
+				var obj = JSON.parse(data);
+				if(obj.lecturer.length > 0) {
+					$("#containerlecturer").html("");
+					numlecturer = 0;
+
+					for(var i =0; i < obj.lecturer.length; i++) {
+						var tr = "<tr>" +
+                        		  "<td>" + (i+1) + "</td>" +
+                        		  "<td>" + obj.lecturer[i].lecturer_npk + "</td>" + 
+                        		  "<td>" + obj.lecturer[i].full_name + "</td>" + 
+                        		  "<td><input type=\"hidden\" name=\"lecturer[]\" value=\"" + obj.lecturer[i].lecturer_npk + "\" /><button type=\"button\" class=\"btn btn-danger dellecturer\"><i class=\"fas fa-trash\"></i></button></td>" + 
+                        		  "</tr>";
+                       numlecturer++;
+                       $("#containerlecturer").append(tr);
+					}		
+				}
+				$("#course_id_info").val(obj.data[0].course_id);
+				$("#course_name_info").val(obj.data[0].course_name);
+				$("#kp_info").val(obj.data[0].KP);
+				$("#modalAddStudent").modal();
+			});
+				
+			$("#modalAddLecturer").modal();
+		});
 		';
+
+		$data['js'] .= '$("#btnaddlecturer").on("click",function() {
+			var npk = $("#chooselecturer").val();
+			var name = $("#chooselecturer option:selected").html();
+
+			if(numlecturer == 0) { $("#containerlecturer").html(""); }
+
+           numlecturer++;
+			var tr = "<tr>" +
+            		  "<td>" + numlecturer + "</td>" +
+            		  "<td>" + npk + "</td>" + 
+            		  "<td>" + name + "</td>" + 
+            		  "<td><input type=\"hidden\" name=\"lecturer[]\" value=\"" + npk + "\" /><button type=\"button\" class=\"btn btn-danger dellecturer\"><i class=\"fas fa-trash\"></i></button></td>" + 
+            		  "</tr>";
+           $("#containerlecturer").append(tr);
+			
+		});';
+
+		$data['js'] .= '$("#btnSubmitLecturer").on("click",function(event) {
+			// cek
+			var hid = $( "#containerlecturer" ).find( "input[type=hidden]" );
+			var oldvalue = [];
+			var errorinput = false;
+			var x = 0;
+			for(var i = 0; i < hid.length; i++ ) {
+				for(var j = 0; j < oldvalue.length; j++) {
+					if(oldvalue[j] == hid[i].value) {
+						errorinput = true;
+						break;
+					}
+				}
+
+				oldvalue[x] = hid[i].value;
+				x++;
+			}
+
+			if(errorinput == true) {
+				event.preventDefault();
+				alert("Unable to save. Duplicate lecturer found. Please check again.");
+			}
+		});';
 
 		// handle data table
 		$data['js'] .= ' $("#tablearticle").DataTable({
@@ -459,42 +553,56 @@ class Admin extends CI_Controller {
 		      "autoWidth": false,
 		    });';
 
-		if($this->session->flashdata('notif') == 'success') {
-			$data['alert'] = "
-			    const Toast = Swal.mixin({
-			      toast: true,
-			      position: 'top-end',
-			      showConfirmButton: false,
-			      timer: 3000
-			    });
+		// notif
+		if($this->session->flashdata('notif')) {
+			$notif = $this->session->flashdata('notif');
+			if($notif['type'] == 'success') {
+				$data['js'] .= '
+				const Toast = Swal.mixin({
+				      toast: true,
+				      position: "top-end",
+				      showConfirmButton: false,
+				      timer: 3000
+				    });
+				    Toast.fire({
+				        icon: "success",
+				        title: "'.$notif['msg'].'"
+				      });';
+			} else if($notif['type'] == 'failed') {
+				$data['js'] .= '
+				const Toast = Swal.mixin({
+				      toast: true,
+				      position: "top-end",
+				      showConfirmButton: false,
+				      timer: 3000
+				    });
+				    Toast.fire({
+				        icon: "warning",
+				        title: "'.$notif['msg'].'"
+				      });';
+			}
+		}
 
-			      Toast.fire({
-			        icon: 'success',
-			        title: 'Your attendances have been recorded successfully'
-			      });
-			   ";	
-		} else if($this->session->flashdata('notif') == 'failed') {
-			$data['alert'] = "
-			    const Toast = Swal.mixin({
-			      toast: true,
-			      position: 'top-end',
-			      showConfirmButton: false,
-			      timer: 3000
-			    });
+		if($this->input->post('btnSubmitClass')) {
+			if($this->course_model->addCourseOpen($this->input->get('sem'), $this->input->post('course_id'), $this->input->post('KP'))) {
+				$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'New class have been added'));
+			} else {
+				$this->session->set_flashdata('notif', array('type' => 'failed', 'msg' => 'Class already exist. Please check again'));
+				die();
+			}
 
-			      Toast.fire({
-			        icon: 'error',
-			        title: 'Invalid class codes. Unable to record attendances'
-			      });
-			   ";	
+			redirect('admin/manageclass?sem='.$this->input->get('sem'))	;
 		}
 
 		$data['name'] = $this->session->userdata('user')->full_name;
 		$data['title'] = "Manage Class";
 		$data['semester'] = $this->semester_model->getSemester(null, array('is_deleted' => 0));
+		$data['course'] = $this->course_model->getCourse(null, array('is_deleted'=>0));
+		$data['lecturer'] = $this->lecturer_model->getLecturer(null, array('is_deleted' => 0));
 
 		if($this->input->get('sem')) {
 			$data['course_open'] = $this->course_model->getCourseOpen($this->input->get('sem'));
+			$data['current_semester'] = $this->semester_model->getSemester($this->input->get('sem'));
 		}
 
 		$this->load->view('v_header', $data);
