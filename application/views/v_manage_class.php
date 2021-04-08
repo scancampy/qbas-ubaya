@@ -104,7 +104,7 @@
   <div class="modal fade " id="modalAddLecturer" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
-      <form action="<?php echo base_url('admin/manageclass'); ?>" method="post" >
+      <form action="<?php echo base_url('admin/manageclass?sem='.$this->input->get('sem')); ?>" method="post" >
         <div class="modal-header">
           <h5 class="modal-title">Add Lecturer</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -115,7 +115,7 @@
           <div class="row">
             <div class="col-md-4">
               <div class="form-group">
-                <input type="hidden" id="hiddenid" name="hiddenid"/>
+                <input type="hidden" id="course_open_hidden_id" name="course_open_hidden_id"/>
                 <div class="col-md-12">
                   <label for="course_id_info">Course ID</label>
                   <input type="text" maxlength="15" class="form-control" id="course_id_info" name="course_id_info" disabled placeholder="">
@@ -132,7 +132,6 @@
             </div>
             <div class="col-md-4">
                <div class="form-group">
-                <input type="hidden" id="hiddenid" name="hiddenid"/>
                 <div class="col-md-12">
                   <label for="semester_info">Semester</label>
                   <input type="text" value="<?php echo $current_semester[0]->semester_name; ?>" maxlength="15" class="form-control" id="semester_info" name="semester_info" disabled placeholder="">

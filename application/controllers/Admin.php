@@ -478,6 +478,8 @@ class Admin extends CI_Controller {
 
 		$("body").on("click", ".lectureredit", function() {
 			var id = $(this).attr("courseopenid");
+
+			$("#course_open_hidden_id").val(id);
 		    $.post("'.base_url('admin/jsongetcourseopen').'", { sentid: id}, function(data){ 
 		    	
 				var obj = JSON.parse(data);
@@ -495,6 +497,13 @@ class Admin extends CI_Controller {
                        numlecturer++;
                        $("#containerlecturer").append(tr);
 					}		
+				} else {
+					numlecturer =0;
+					var tr = "<tr>" + 
+                        "<td colspan=\"4\">No data</td>" + 
+                      "</tr>";
+
+                     $("#containerlecturer").html(tr);
 				}
 				$("#course_id_info").val(obj.data[0].course_id);
 				$("#course_name_info").val(obj.data[0].course_name);
@@ -583,15 +592,41 @@ class Admin extends CI_Controller {
 			}
 		}
 
+		if($this->input->post('btnSubmitLecturer')) {
+			$lecturer = $this->input->post('lecturer');
+
+			for($i = 0; $i < count($lecturer); $i++) {
+				$res = $this->course_model->findLecturer($this->input->post('course_open_hidden_id'), $lecturer[$i]);
+
+				if(count($res) == 0) {
+					$this->course_model->addLecturer($this->input->post('course_open_hidden_id'), $lecturer[$i]);	
+				}
+			}
+
+			$res = $this->course_model->getLecturerList(null, $this->input->post('course_open_hidden_id'));
+			$currentlecturer = array();
+			foreach ($res as $key => $value) {
+				$currentlecturer[] = $value->lecturer_npk;
+			}
+
+			$array3 = array_diff($currentlecturer, $lecturer);
+			foreach ($array3 as $key => $value) {
+				$this->course_model->removeLecturer($this->input->post('course_open_hidden_id'), $value);
+			}
+
+			$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'Lecturer  have been added to the course'));
+
+			redirect('admin/manageclass?sem='.$this->input->get('sem'));
+		}
+
 		if($this->input->post('btnSubmitClass')) {
 			if($this->course_model->addCourseOpen($this->input->get('sem'), $this->input->post('course_id'), $this->input->post('KP'))) {
 				$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'New class have been added'));
 			} else {
 				$this->session->set_flashdata('notif', array('type' => 'failed', 'msg' => 'Class already exist. Please check again'));
-				die();
 			}
 
-			redirect('admin/manageclass?sem='.$this->input->get('sem'))	;
+			redirect('admin/manageclass?sem='.$this->input->get('sem'));
 		}
 
 		$data['name'] = $this->session->userdata('user')->full_name;

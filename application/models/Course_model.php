@@ -93,5 +93,23 @@ class Course_model extends CI_Model {
 
  		return $result->result();
  	}
+
+ 	public function findLecturer($course_open_id, $lecturer_npk) {
+ 		$q = $this->db->get_where('lecturer_course_open', array('course_open_id' => $course_open_id, 'lecturer_npk' => $lecturer_npk));
+
+ 		return $q->result();
+ 	}
+
+ 	public function removeLecturer($course_open_id, $lecturer_npk) {
+ 		$this->db->where("course_open_id", $course_open_id);
+ 		$this->db->where("lecturer_npk", $lecturer_npk);
+ 		$this->db->delete('lecturer_course_open');
+ 	}
+
+ 	public function addLecturer($course_open_id, $lecturer_npk) {
+ 		$data = array('course_open_id' => $course_open_id, 'lecturer_npk' => $lecturer_npk);
+ 		$this->db->insert('lecturer_course_open', $data);
+ 		return true;
+ 	}
 }
 ?>
