@@ -70,9 +70,9 @@
                         <td class="d-flex justify-content-end">
                           <a href="#" data-toggle="modal" data-target="#modalAddLecturer" courseopenid="<?php echo $value->id; ?>" class="btn btn-xs btn-primary mr-1 lectureredit"><i class="nav-icon fas fa-chalkboard-teacher"></i> Lecturer</a>
 
-                          <a href="<?php echo base_url('admin/enroll/'.$value->id); ?>" class="btn btn-xs btn-primary mr-1 "><i class="nav-icon fas fa-user-graduate"></i> Enroll</a>
+                          <a href="<?php echo base_url('admin/enroll/'.$value->id.'/'.$this->input->get('sem')); ?>" class="btn btn-xs btn-primary mr-1 "><i class="nav-icon fas fa-user-graduate"></i> Enroll</a>
 
-                          <a href="<?php echo base_url('admin/schedule/'.$value->id); ?>" class="btn btn-xs btn-primary mr-1"><i class="nav-icon fas fa-calendar-alt"></i> Schedule</a>                        
+                          <a href="<?php echo base_url('admin/schedule/'.$value->id.'/'.$this->input->get('sem')); ?>" class="btn btn-xs btn-primary mr-1"><i class="nav-icon fas fa-calendar-alt"></i> Schedule</a>                        
 
                           <a href="<?php echo base_url('admin/delcourseopen/'.$this->input->get('sem').'/'.$value->id); ?>" onclick="return confirm('Are you sure want to delete <?php echo $value->course_id.' KP '.$value->KP; ?>?');" class="btn btn-xs btn-danger m-0"><i class="nav-icon fas fa-trash"></i> Delete</a></td>
                       </tr>

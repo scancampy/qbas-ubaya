@@ -12,13 +12,15 @@ class Student_model extends CI_Model {
 		}
 	}
 
-	public function getStudents($nrp = null, $where = null) {
+	public function getStudents($nrp = null, $where = null, $order_by = 'nrp', $order_type='asc') {
 		if($nrp != null) {
 			$this->db->where('nrp', $nrp);
 		}
 		if($where != null) {
 			$this->db->where($where);
 		}
+
+		$this->db->order_by($order_by, $order_type);
 
 		$result = $this->db->get('student');
 		return $result->result();

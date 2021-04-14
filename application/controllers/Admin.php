@@ -644,6 +644,141 @@ class Admin extends CI_Controller {
 		$this->load->view('v_manage_class', $data);
 		$this->load->view('v_footer', $data);
     }
+
+    public function enroll($course_open_id, $semester_id) {
+    	if($this->input->post('btnSubmitStudent')) {
+    		if($this->course_model->addStudent($this->input->post('choosestudent'), $course_open_id)) {
+				$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'Student have been successfully enrolled'));
+    		} else {
+				$this->session->set_flashdata('notif', array('type' => 'failed', 'msg' => 'Student already enrolled. Please check again'));
+    		}
+
+    		redirect('admin/enroll/'.$course_open_id.'/'.$semester_id);
+    	}
+
+    	$data = array();
+    	$data['js'] = ' 
+    	//Initialize Select2 Elements
+    $(".select2").select2(); ';
+
+    	// notif
+		if($this->session->flashdata('notif')) {
+			$notif = $this->session->flashdata('notif');
+			if($notif['type'] == 'success') {
+				$data['js'] .= '
+				const Toast = Swal.mixin({
+				      toast: true,
+				      position: "top-end",
+				      showConfirmButton: false,
+				      timer: 3000
+				    });
+				    Toast.fire({
+				        icon: "success",
+				        title: "'.$notif['msg'].'"
+				      });';
+			} else if($notif['type'] == 'failed') {
+				$data['js'] .= '
+				const Toast = Swal.mixin({
+				      toast: true,
+				      position: "top-end",
+				      showConfirmButton: false,
+				      timer: 3000
+				    });
+				    Toast.fire({
+				        icon: "warning",
+				        title: "'.$notif['msg'].'"
+				      });';
+			}
+		}
+
+		$data['user'] = $this->session->userdata('user');
+		$data['menu_type'] = $this->session->userdata('menu_type');
+
+		$data['course'] = $this->course_model->getCourseOpen((int)$semester_id, (int)$course_open_id);
+		$data['student'] = $this->course_model->getStudentList((int)$course_open_id);
+
+		$where = ' is_deleted = 0 AND nrp NOT IN(';
+		foreach ($data['student'] as $key => $value) {
+			if($key != 0) { $where .= ', '; }
+			$where .= $value->nrp;
+		}
+		$where .= ') ';
+
+		$data['available_student'] = $this->student_model->getStudents(null, $where );
+		$data['name'] = $this->session->userdata('user')->full_name;
+		$data['title'] = "Enroll";
+		$data['course_open_id'] = $course_open_id;
+		$data['semester_id'] = $semester_id;
+
+    	$this->load->view('v_header', $data);
+		$this->load->view('v_enroll', $data);
+		$this->load->view('v_footer', $data);
+    }
+
+    public function removestudent($course_open_id, $nrp, $semester_id) {
+    	$this->course_model->removeStudent($nrp, $course_open_id);
+    	$this->session->set_flashdata('notif', array('type' => 'success', 'msg' => 'Student have been successfully removed from the class'));
+
+    	redirect('admin/enroll/'.$course_open_id.'/'.$semester_id);
+    }
+
+    public function schedule($course_open_id, $semester_id) {
+    	$data = array();
+    	$data['js'] = '//Date range picker
+    $("#date").datetimepicker({
+        format: "L"
+    });
+
+
+    //Timepicker
+    $("#time").datetimepicker({
+      format:"HH:mm"
+    })
+';
+    	// notif
+		if($this->session->flashdata('notif')) {
+			$notif = $this->session->flashdata('notif');
+			if($notif['type'] == 'success') {
+				$data['js'] .= '
+				const Toast = Swal.mixin({
+				      toast: true,
+				      position: "top-end",
+				      showConfirmButton: false,
+				      timer: 3000
+				    });
+				    Toast.fire({
+				        icon: "success",
+				        title: "'.$notif['msg'].'"
+				      });';
+			} else if($notif['type'] == 'failed') {
+				$data['js'] .= '
+				const Toast = Swal.mixin({
+				      toast: true,
+				      position: "top-end",
+				      showConfirmButton: false,
+				      timer: 3000
+				    });
+				    Toast.fire({
+				        icon: "warning",
+				        title: "'.$notif['msg'].'"
+				      });';
+			}
+		}
+
+	$data['user'] = $this->session->userdata('user');
+		$data['menu_type'] = $this->session->userdata('menu_type');
+
+		$data['course'] = $this->course_model->getCourseOpen((int)$semester_id, (int)$course_open_id);
+		$data['name'] = $this->session->userdata('user')->full_name;
+		$data['title'] = "Schedule";
+		$data['course_open_id'] = $course_open_id;
+		$data['semester_id'] = $semester_id;
+		$data['schedule'] = $this->schedule_model->getSchedule(null, $course_open_id);
+
+    	$this->load->view('v_header', $data);
+		$this->load->view('v_schedule', $data);
+		$this->load->view('v_footer', $data);
+    }
     // END OF MANAGE CLASS
 
 	public function index() { 

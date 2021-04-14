@@ -78,6 +78,24 @@ class Course_model extends CI_Model {
  		$this->db->delete('course_open');
  	}
 
+ 	public function addStudent($nrp, $course_open_id) {
+ 		$q = $this->db->get_where('student_course', array('student_nrp'=> $nrp, 'course_open_id' => $course_open_id));
+
+ 		if($q->num_rows() ==0) {
+ 			$data =array('student_nrp' => $nrp, 'course_open_id' => $course_open_id);
+ 			$this->db->insert('student_course', $data);
+ 			return true;
+ 		} else {
+ 			return false;
+ 		}
+ 	}
+
+ 	public function removeStudent($nrp, $course_open_id) {
+ 		$this->db->where('student_nrp', $nrp);
+ 		$this->db->where('course_open_id', $course_open_id);
+ 		$this->db->delete('student_course');
+ 	}
+
  	// LECTURER COURSE OPEN
  	public function getLecturerList($id = null, $course_open_id  = null) {
  		if($id!=null) {
@@ -111,5 +129,7 @@ class Course_model extends CI_Model {
  		$this->db->insert('lecturer_course_open', $data);
  		return true;
  	}
+
+
 }
 ?>
