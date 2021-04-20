@@ -20,5 +20,36 @@ class Schedule_model extends CI_Model {
 		return $q->result();
 	}
 	
+	public function updateschedule($id, $start_date, $end_date, $methods) {
+		$data = array(
+					  'start_date' => $start_date,
+					  'end_date' => $end_date, 
+					  'methods' => $methods);
+		$this->db->where('id', $id);
+
+		$this->db->update('schedule', $data);
+	}
+
+	public function updatemethod($id, $methods) {
+		$data = array(  'methods' => $methods);
+		$this->db->where('id', $id);
+
+		$this->db->update('schedule', $data);
+		return $this->db->last_query();
+	}
+
+	public function deleteschedule($id) {
+		$this->db->where('id', $id);
+		$this->db->delete('schedule');
+	}
+
+	public function setSchedule($course_open_id, $start_date, $end_date, $methods) {
+		$data = array('course_open_id' => $course_open_id,
+					  'start_date' => $start_date,
+					  'end_date' => $end_date, 
+					  'methods' => $methods);
+
+		$this->db->insert('schedule', $data);
+	}
 }
-?>
+?> 

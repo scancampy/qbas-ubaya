@@ -723,18 +723,106 @@ class Admin extends CI_Controller {
     }
 
     public function schedule($course_open_id, $semester_id) {
+    	if($this->input->post('btnSubmitEditSchedule')) {
+    		$date = date('Y-m-d H:i:s', strtotime($this->input->post('date')." ".$this->input->post('time').":00"));
+    			//echo $date;
+			$sks = $this->input->post('duration') * 50;
+			$enddate = date('Y-m-d H:i:s', strtotime("+".$sks." minutes", strtotime($date)));
+			$this->schedule_model->updateschedule($this->input->post('hidden_edit_schedule_id'), $date, $enddate, $this->input->post('methods'));
+			$this->session->set_flashdata('notif',array('type' => 'success', 'msg' => 'Schedule saved'));
+    		redirect('admin/schedule/'.$course_open_id.'/'.$semester_id);
+    	}
+
+    	if($this->input->post('btnSubmitStudent')) {
+
+    		$d = $this->input->post('duplicate');
+    		if($d != '-') {
+    			$date = date('Y-m-d H:i:s', strtotime($this->input->post('date')." ".$this->input->post('time').":00"));
+    			//echo $date;
+    			$sks = $this->input->post('duration') * 50;
+    			$enddate = date('Y-m-d H:i:s', strtotime("+".$sks." minutes", strtotime($date)));
+    			//echo '-'.$enddate.'<br/>';
+
+    			$this->schedule_model->setSchedule($course_open_id, $date, $enddate, $this->input->post('methods'));
+
+    			for($i = 0; $i < $d-1; $i++) {    				
+    				$date = date('Y-m-d H:i:s',strtotime("+7 day", strtotime($date)));
+    			//	echo $date;
+    				$enddate = date('Y-m-d H:i:s', strtotime("+".$sks." minutes", strtotime($date)));
+    			//echo '-'.$enddate.'<br/>';
+    				$this->schedule_model->setSchedule($course_open_id, $date, $enddate, $this->input->post('methods'));
+    			}
+    		} else {
+    			$date = date('Y-m-d H:i:s', strtotime($this->input->post('date')." ".$this->input->post('time').":00"));
+    			//echo $date;
+    			$sks = $this->input->post('duration') * 50;
+    			$enddate = date('Y-m-d H:i:s', strtotime("+".$sks." minutes", strtotime($date)));
+    		}    	
+
+    		$this->session->set_flashdata('notif',array('type' => 'success', 'msg' => 'Schedule saved'));
+    		redirect('admin/schedule/'.$course_open_id.'/'.$semester_id);
+    	}
+
     	$data = array();
     	$data['js'] = '//Date range picker
     $("#date").datetimepicker({
-        format: "L"
+        format: "YYYY-MM-DD"
     });
 
 
     //Timepicker
     $("#time").datetimepicker({
       format:"HH:mm"
-    })
+    });
+
+    
 ';
+
+$data['js'] .= '
+	$(".selmethods").on("change", function() {
+		 $.post("'.base_url('admin/jsonupdateschedule').'", { sentid:  $(this).attr("schedule_id"), newmethod: $(this).val() }, function(data){ 
+		 	alert(data);
+		 		const Toast = Swal.mixin({
+				      toast: true,
+				      position: "top-end",
+				      showConfirmButton: false,
+				      timer: 3000
+				    });
+				    Toast.fire({
+				        icon: "success",
+				        title: "Schedule saved"
+				      });
+		 });
+	});
+';
+	
+		$data['js'] .= '
+		$("body").on("click", ".scheduleedit", function() {
+			var id = $(this).attr("scheduleid");
+
+			$("#hidden_edit_schedule_id").val(id);
+		    $.post("'.base_url('admin/jsongetschedule').'", { sentid: id}, function(data){ 
+		    	 $("#editdate").datetimepicker({
+			        format: "YYYY-MM-DD"
+			    });
+
+				$("#edittime").datetimepicker({
+				  format:"HH:mm"
+				});
+
+				var obj = JSON.parse(data);
+				$("#hidden_schedule_id").val(obj.data[0].id);
+				$("#editdate").val(obj.data[0].start_date.substr(0, 10));
+				$("#edittime").val(obj.data[0].start_date.substr(11, 5));
+				$("#editmethods").val(obj.data[0].methods);
+				$("#editduration").val(obj.diff);
+				$("#modalEditSchedule").modal();
+
+			});
+				
+			
+		});
+		';
     	// notif
 		if($this->session->flashdata('notif')) {
 			$notif = $this->session->flashdata('notif');
@@ -778,6 +866,29 @@ class Admin extends CI_Controller {
     	$this->load->view('v_header', $data);
 		$this->load->view('v_schedule', $data);
 		$this->load->view('v_footer', $data);
+    }
+
+    public function jsongetschedule() {
+    	if($this->input->post('sentid')) {
+    		$result = $this->schedule_model->getSchedule($this->input->post('sentid'));
+    		$diff = strtotime($result[0]->end_date) - strtotime($result[0]->start_date);
+
+    		echo json_encode(array('result' => 'success', 'data' => $result, 'diff' => $diff / 3000));
+    	} else {
+    		echo json_encode(array('result' => 'failed'));
+    	}
+    }
+
+    public function jsonupdateschedule() {
+
+    	$q = $this->schedule_model->updatemethod($this->input->post('sentid'), $this->input->post('newmethod'));
+    	echo json_encode(array('result' => $q,'post' => $_POST));
+    }
+
+    public function removeschedule($course_open_id, $id, $semester_id) {
+    	$this->schedule_model->deleteschedule($id);
+    	$this->session->set_flashdata('notif',array('type' => 'success', 'msg' => 'Schedule deleted'));
+    	redirect('admin/schedule/'.$course_open_id.'/'.$semester_id);
     }
     // END OF MANAGE CLASS
 

@@ -53,6 +53,7 @@
                 </div>
 
                 <div class="col-md-12">
+                  <form name="formschedule" id="formschedule" method="post" action="<?php echo base_url('admin/schedule/'.$course_open_id.'/'.$semester_id); ?>">
                   <table id="tablearticle" class="table table-bordered table-striped">
                     <thead>
                     <tr>
@@ -71,7 +72,7 @@
                         <td><?php echo $key+1; ?></td>
                         <td><?php echo strftime("%d %b %Y %H:%M", strtotime($value->start_date)); ?></td>
                         <td>
-                          <select class="form-control">
+                          <select class="form-control selmethods" schedule_id="<?php echo $value->id; ?>" name="methods_schedule[]" >
                             <option value="simple" <?php if($value->methods == 'simple') { echo 'selected'; } ?>>Simple</option>
                             <option value="auto" <?php if($value->methods == 'auto') { echo 'selected'; } ?>>Auto</option>
                             <option value="manual" <?php if($value->methods == 'manual') { echo 'selected'; } ?>>Manual</option>
@@ -79,7 +80,7 @@
                           </select>
                         </td>
                         <td class="d-flex justify-content-end">
-                          <a href="#" data-toggle="modal" data-target="#modalAddSchedule" scheduleid="<?php echo $value->id; ?>" class="btn btn-xs btn-primary mr-1 scheduleedit"><i class="nav-icon fas fa-calendar"></i> Edit</a>
+                          <a href="#"  scheduleid="<?php echo $value->id; ?>" class="btn btn-xs btn-primary mr-1 scheduleedit"><i class="nav-icon fas fa-calendar"></i> Edit</a>
 
                           <a href="<?php echo base_url('admin/removeschedule/'.$course_open_id.'/'.$value->id.'/'.$semester_id); ?>" onclick="return confirm('Are you sure want to remove this schedule?');" class="btn btn-xs btn-danger m-0"><i class="nav-icon fas fa-trash"></i> Remove</a></td>
                       </tr>
@@ -95,6 +96,7 @@
                     </tr>
                     </tfoot>
                   </table>
+                </form>
                 </div>
               </div>
               <!-- /.card-body -->
@@ -111,6 +113,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <form action="<?php echo base_url('admin/schedule/'.$course_open_id.'/'.$semester_id); ?>" method="post" >
+        <input type="hidden" name="hidden_schedule_id" id="hidden_schedule_id" />
         <div class="modal-header">
           <h5 class="modal-title">Add Schedule</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -155,6 +158,22 @@
                     <?php } ?>
                    </select>
                 </div>
+
+                <div class="form-group">
+                  <label>Class Duration (1 sks - 55 menit):</label>
+                  <input type="number" min="1" class="form-control" value="1" name="duration" required />
+                </div>
+
+                <div class="form-group">
+                   <label>Methods:</label>
+                   <select class="form-control" name="methods">
+                    <option value="simple">Simple</option>
+                     <option value="auto">Auto</option>
+                      <option value="manual">Manual</option>
+                       <option value="authenticator">Authenticator</option>
+                    
+                   </select>
+                </div>
          
         </div>
         <div class="modal-footer">
@@ -166,46 +185,71 @@
   </div>
 </div> 
 
-<div class="modal fade " id="modalAddClass" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-lg" role="document">
+<div class="modal fade " id="modalEditSchedule" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form action="<?php echo base_url('admin/manageclass?sem='.$this->input->get('sem')); ?>" method="post" >
+      <form action="<?php echo base_url('admin/schedule/'.$course_open_id.'/'.$semester_id); ?>" method="post" >
+        <input type="hidden" name="hidden_edit_schedule_id" id="hidden_edit_schedule_id" />
         <div class="modal-header">
-          <h5 class="modal-title">Add Class</h5>
+          <h5 class="modal-title">Edit Schedule</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <div class="form-group">
-            <div class="col-md-12">
-              <label for="course_id">Course ID</label>
-              <select class="form-control" name="course_id" required>
-                <?php foreach ($course as $key => $value) { ?>
-                  <option value="<?php echo $value->course_id; ?>"><?php echo $value->course_id.' - '.$value->course_name; ?></option>
-                <?php } ?>
-              </select>
-            </div>
-          </div>
+              <!-- Date -->
+                <div class="form-group">
+                  <label>Date:</label>
+                    <div class="input-group date" id="date" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" name="date" data-target="#editdate" required id="editdate"/>
+                        <div class="input-group-append" data-target="#editdate" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.form group -->
 
-          <div class="form-group">
-            <div class="col-md-2">
-              <label for="KP">KP</label>
-              <input type="text" class="form-control" id="KP" name="KP" required >
-            </div>
-          </div>
+                <!-- time Picker -->
+                <div class="bootstrap-timepicker">
+                  <div class="form-group">
+                    <label>Time:</label>
 
-          
+                    <div class="input-group date" id="time" data-target-input="nearest">
+                      <input type="text" class="form-control datetimepicker-input" data-target="#edittime" name="time" required id="edittime" />
+                      <div class="input-group-append" data-target="#edittime" data-toggle="datetimepicker">
+                          <div class="input-group-text"><i class="far fa-clock"></i></div>
+                      </div>
+                      </div>
+                    <!-- /.input group -->
+                  </div>
+                </div>
+                  <!-- /.form group -->
+
+                <div class="form-group">
+                  <label>Class Duration (1 sks - 55 menit):</label>
+                  <input type="number" min="1" id="editduration" class="form-control" value="1" name="duration" required />
+                </div>
+
+                <div class="form-group">
+                   <label>Methods:</label>
+                   <select class="form-control" name="methods"  id="editmethods">
+                    <option value="simple">Simple</option>
+                     <option value="auto">Auto</option>
+                      <option value="manual">Manual</option>
+                       <option value="authenticator">Authenticator</option>
+                    
+                   </select>
+                </div>
+         
         </div>
         <div class="modal-footer">
-          <button type="submit" value="submit" name="btnSubmitClass" class="btn btn-primary">Submit</button>
+          <button type="submit" value="submit" id="btnSubmitEditSchedule" name="btnSubmitEditSchedule" class="btn btn-primary">Submit</button>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
       </form>
     </div>
   </div>
 </div> 
-
 
 
 
