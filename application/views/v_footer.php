@@ -28,6 +28,9 @@
 <script src="<?php echo base_url('plugins/daterangepicker/daterangepicker.js'); ?>"></script>
 <!-- Tempusdominus Bootstrap 4 -->
 <script src="<?php echo base_url('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js'); ?>"></script>
+
+<!-- Bootstrap Switch -->
+<script src="<?php echo base_url('js/bootstrap-switch.min.js'); ?>"></script>
 <!-- DataTables -->
 <script src="<?php echo base_url('plugins/datatables/jquery.dataTables.min.js'); ?>"></script>
 <script src="<?php echo base_url('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js'); ?>"></script>

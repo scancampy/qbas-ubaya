@@ -53,6 +53,8 @@ class Dashboard extends CI_Controller {
 	public function index() { 
 		$data = array();
 		$data['user'] = $this->session->userdata('user');
+		$data['menu_type'] = $this->session->userdata('menu_type');	
+
 
 		if($this->session->flashdata('notif') == 'success') {
 			$data['alert'] = "

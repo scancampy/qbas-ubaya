@@ -66,7 +66,7 @@ class Welcome extends CI_Controller {
 				}
 			} else {
 				$this->session->set_userdata('user', $cek);
-					$this->session->set_userdata('menu_type', 'student');
+				$this->session->set_userdata('menu_type', 'student');
 				redirect('dashboard');
 			}
 		}

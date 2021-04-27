@@ -36,6 +36,14 @@ class Lecturer_model extends CI_Model {
 		}
 	}
 
+	public function getLecturerClass($npk) {
+		$active = $this->db->get_where('semester', array('is_active' => 1));
+		$hactive = $active->row();
+
+		$res = $this->db->query('SELECT course.*, course_open.id as `course_open_id`, course_open.KP FROM course, lecturer_course_open, course_open WHERE lecturer_course_open.lecturer_npk = "'.$npk.'" AND lecturer_course_open.course_open_id = course_open.id AND course_open.semester_id  = '.$hactive->id.' AND course_open.course_id = course.course_id;');
+		return $res->result();
+	}
+
 
 	public function editLecturer($npk,$full_name) {
 		$data = array('full_name' => $full_name);

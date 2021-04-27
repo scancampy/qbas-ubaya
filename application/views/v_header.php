@@ -18,6 +18,8 @@
   <link rel="stylesheet" href="<?php echo base_url('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css'); ?>">
   <link rel="stylesheet" href="<?php echo base_url('plugins/datatables-responsive/css/responsive.bootstrap4.min.css'); ?>">
 
+  <link rel="stylesheet"  href="<?php echo base_url('css/bootstrap-switch.min.css'); ?>">
+
   <!-- Tempusdominus Bootstrap 4 -->
   <link rel="stylesheet" href="<?php echo base_url('plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css'); ?>">
 
@@ -108,6 +110,8 @@
                   <p>Master Lecturer</p>
                 </a>
               </li>
+
+              
             </ul>
           </li>
           <li class="nav-item">
@@ -118,10 +122,20 @@
               </p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="<?php echo base_url('admin/generateabsence'); ?>" class="nav-link <?php if ($this->uri->segment(2) == 'generateabsence') { echo 'active';  } ?>">
+              <i class="nav-icon fas fa-cogs"></i>
+              <p>
+                Generate Absence
+              </p>
+            </a>
+          </li>
         <?php } else { ?>
          
-          <li class="nav-item">
-            <a href="<?php echo base_url('dashboard'); ?>" class="nav-link active">
+          
+          <?php if(@$menu_type =='lecturer') { ?>
+            <li class="nav-item">
+            <a href="<?php echo base_url('lecturer'); ?>" class="nav-link <?php if ($this->uri->segment(1) == 'lecturer') { echo 'active';  } ?>">
               <i class="nav-icon fas fa-user-check"></i>
               <p>
                 Attendances
@@ -129,13 +143,31 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="<?php echo base_url('report'); ?>" class="nav-link">
+            <a href="<?php echo base_url('report'); ?>" class="nav-link <?php if ($this->uri->segment(1) == 'report') { echo 'active';  } ?>">
               <i class="nav-icon fas fa-calendar-check"></i>
               <p>
                 Report
               </p>
             </a>
           </li>
+        <?php } else if(@$menu_type =='student') { ?>
+          <li class="nav-item">
+            <a href="<?php echo base_url('dashboard'); ?>" class="nav-link <?php if ($this->uri->segment(1) == 'dashboard') { echo 'active';  } ?>">
+              <i class="nav-icon fas fa-user-check"></i>
+              <p>
+                Attendances
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="<?php echo base_url('report/student'); ?>" class="nav-link <?php if ($this->uri->segment(1) == 'report') { echo 'active';  } ?>">
+              <i class="nav-icon fas fa-calendar-check"></i>
+              <p>
+                Report
+              </p>
+            </a>
+          </li>
+        <?php } ?>
         <?php } ?>
           <li class="nav-item">
             <a href="<?php echo base_url('dashboard/signout'); ?>" class="nav-link">

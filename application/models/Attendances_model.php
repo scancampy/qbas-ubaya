@@ -123,6 +123,16 @@ class Attendances_model extends CI_Model {
 		}
 	}
 
+	public function getStudentAbsence($nrp) {
+		$q = $this->db->query("SELECT absence.*, schedule.start_date, course_open.KP, course.course_short_name FROM `absence` 
+INNER JOIN schedule ON schedule.id = absence.schedule_id
+INNER JOIN course_open ON course_open.id = absence.course_open_id
+INNER JOIN course ON course.course_id = course_open.course_id 
+WHERE absence.student_nrp = $nrp");
+
+		return $q->result();
+	}
+
 	public function checkAuthenticator($nrp, $codes) {
 		$hasil = $this->getCurrentClass($nrp);
 		//echo $hasil; die();
@@ -232,7 +242,7 @@ class Attendances_model extends CI_Model {
 	}
 
 	public function getAttendances($course_open_id, $schedule_id) {
-		$q = $this->db->query("SELECT student.nrp, student.full_name, absence.absence_date FROM absence 
+		$q = $this->db->query("SELECT student.nrp, student.full_name, absence.absence_date, absence.is_absence FROM absence 
 			INNER JOIN student ON student.nrp = absence.student_nrp WHERE absence.course_open_id = $course_open_id AND absence.schedule_id = $schedule_id ORDER BY student.nrp ASC;");
 		return $q->result();
 	}
@@ -281,6 +291,19 @@ class Attendances_model extends CI_Model {
 		} else {
 			return false;
 		}
+
+	}
+
+	public function overrideAttendaces($student_nrp, $course_open_id, $schedule_id) {
+		$q = $this->db->get_where('absence', array('student_nrp' => $student_nrp, 'course_open_id' => $course_open_id, 'schedule_id' => $schedule_id));
+		if($q->num_rows() > 0) {
+			$hq = $q->row();
+			if($hq->is_absence == 0) {
+				$data = array('absence_date' => date('Y-m-d H:i:s'), 'is_absence' => 1);
+				$this->db->where('id', $hq->id);
+				$this->db->update('absence', $data);
+			}
+		} 
 
 	}
 

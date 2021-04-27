@@ -59,6 +59,14 @@ class Course_model extends CI_Model {
 		return $q->result();
 	}
 
+	public function getStudentCourseOpen($semester_id, $student_nrp) {
+		$q = $this->db->query("SELECT course.*, course_open.KP, course_open.id FROM course_open 
+				INNER JOIN course ON course.course_id = course_open.course_id
+				INNER JOIN student_course ON student_course.course_open_id = course_open.id  WHERE course_open.semester_id=$semester_id AND student_course.student_nrp = $student_nrp");
+
+		return $q->result();
+	} 
+
 	public function addCourseOpen($semester_id, $course_id, $KP) {
 		//cek dulu sudah ada atau belum
 		$q = $this->db->get_where('course_open', array('semester_id' => $semester_id, 'course_id'=> $course_id, 'KP' => $KP));

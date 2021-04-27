@@ -892,6 +892,60 @@ $data['js'] .= '
     }
     // END OF MANAGE CLASS
 
+    // START GENERATE ABSENCE
+    public function generateabsence() {
+    	$data = array();
+    	$data['user'] = $this->session->userdata('user');
+		$data['menu_type'] = $this->session->userdata('menu_type');
+
+		if($this->input->post('btngenerate')) {
+			$aktif = $this->semester_model->getSemester(null, array('is_active' => 1));
+			$this->generate_model->generate($aktif[0]->id);
+
+			$this->session->set_flashdata('notif', 'success');
+			redirect('admin/generateabsence');
+		}
+
+		if($this->session->flashdata('notif') == 'success') {
+			$data['alert'] = "
+			    const Toast = Swal.mixin({
+			      toast: true,
+			      position: 'top-end',
+			      showConfirmButton: false,
+			      timer: 3000
+			    });
+
+			      Toast.fire({
+			        icon: 'success',
+			        title: 'Absence have been generated successfully'
+			      });
+			   ";	
+		} else if($this->session->flashdata('notif') == 'failed') {
+			$data['alert'] = "
+			    const Toast = Swal.mixin({
+			      toast: true,
+			      position: 'top-end',
+			      showConfirmButton: false,
+			      timer: 3000
+			    });
+
+			      Toast.fire({
+			        icon: 'error',
+			        title: 'Invalid class codes. Unable to record attendances'
+			      });
+			   ";	
+		}
+
+		$data['title'] = 'Generate Absence';
+		$data['logs'] = $this->generate_model->getLogs();
+
+		$this->load->view('v_header', $data);
+		$this->load->view('v_generate_absence', $data);
+		$this->load->view('v_footer', $data);
+
+    }
+    // END GENEATE ABSENC
+
 	public function index() { 
 		$data = array();
 		$data['user'] = $this->session->userdata('user');
