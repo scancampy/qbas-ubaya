@@ -70,13 +70,15 @@
                   </div>
                 </div>
                 
+                <form method="post" action="<?php echo base_url('report?selectcourse='.$this->input->get('selectcourse')); ?>">
                 <table id="tablearticle" class="table table-bordered table-striped">
                   <thead>
                    <tr>
-                      <th>No</th>
-                      <th>Date & Time</th>
-                      <th>Methods</th>
-                      <th>Actions</th>
+                      <th width="5%">No</th>
+                      <th width="20%">Date & Time</th>
+                      <th width="10%">Methods</th>
+                      <th>Topic</th>
+                      <th width="20%">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -98,6 +100,8 @@
                           <span class="badge badge-warning">Authenticator</span>
                         <?php } ?>
                         </td>
+                        <td><input type="text" name="topics[]" class="form-control" value="<?php echo $value->topics; ?>" />
+                          <input type="hidden" name="hidskedulid[]" value="<?php echo $value->id; ?>" /></td>
                       <td class="d-flex justify-content-end">
                         <a href="<?php echo base_url('report/attendances/'.$this->input->get('selectcourse').'/'.$value->id); ?>" scheduleid="<?php echo $value->id; ?>" class="btn btn-xs btn-primary mr-1 viewreport"><i class="nav-icon fas fa-book"></i> View Attd.</a> </td>
                     </tr>
@@ -107,12 +111,18 @@
                   <tfoot>
                    <tr>
                     <th>No</th>
-                    <th>Date & Time</th>
-                    <th>Methods</th>
-                    <th>Actions</th>
+                      <th>Date & Time</th>
+                      <th>Methods</th>
+                      <th>Topic</th>
+                      <th>Actions</th
                   </tr>
                   </tfoot>
                 </table>
+
+                <div class="text-right">
+                  <button type="submit" name="btnUpdateTopic" value="submit" class="btn btn-primary">Update Topics</button>
+                </div>
+              </form>
 
                  <?php } else { ?>
 <div class="alert alert-info" role="alert">

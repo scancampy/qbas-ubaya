@@ -123,12 +123,18 @@ class Attendances_model extends CI_Model {
 		}
 	}
 
-	public function getStudentAbsence($nrp) {
-		$q = $this->db->query("SELECT absence.*, schedule.start_date, course_open.KP, course.course_short_name FROM `absence` 
+	public function getStudentAbsence($nrp, $course_id = null) {
+		$wherecourse = '';
+		if($course_id != null) {
+			$wherecourse = " AND course.course_id = '".$course_id."' ";
+		}
+
+		$q = $this->db->query("SELECT absence.*, schedule.start_date, course_open.KP, course.course_short_name, course.course_id FROM `absence` 
 INNER JOIN schedule ON schedule.id = absence.schedule_id
 INNER JOIN course_open ON course_open.id = absence.course_open_id
 INNER JOIN course ON course.course_id = course_open.course_id 
-WHERE absence.student_nrp = $nrp");
+WHERE absence.student_nrp = $nrp ".$wherecourse);
+		//echo $this->db->last_query(); 
 
 		return $q->result();
 	}

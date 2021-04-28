@@ -74,10 +74,11 @@
                   <tfoot>
                    <tr>
                     <th>No</th>
-                      <th>NRP</th>
-                      <th>Name</th>
+                      <th>Course</th>
+                      <th>Schedule</th>
+                      <th>KP</th>
+                      <th>Att. Status</th>
                       <th>Log time</th>
-                      <th>Status</th>
                   </tr>
                   </tfoot>
                 </table>

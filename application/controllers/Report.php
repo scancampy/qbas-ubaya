@@ -104,7 +104,7 @@ class Report extends CI_Controller {
 
 			      Toast.fire({
 			        icon: 'success',
-			        title: 'Your attendances have been recorded successfully'
+			        title: 'Topic have been updated successfully'
 			      });
 			   ";	
 		} else if($this->session->flashdata('notif') == 'failed') {
@@ -118,9 +118,23 @@ class Report extends CI_Controller {
 
 			      Toast.fire({
 			        icon: 'error',
-			        title: 'Invalid class codes. Unable to record attendances'
+			        title: 'Unable to update class topics'
 			      });
 			   ";	
+		}
+
+		if($this->input->post('btnUpdateTopic')) {
+			$hidskedulid = $this->input->post('hidskedulid');
+			$topics = $this->input->post('topics');
+
+			for($i = 0; $i < count($hidskedulid); $i++) {
+				if($topics[$i] != "") {
+					$this->schedule_model->updateScheduleTopic($hidskedulid[$i], $topics[$i]);
+				}
+			}
+
+			$this->session->set_flashdata('notif', 'success');
+			redirect('report?selectcourse='.$this->input->get('selectcourse'));
 		}
 
 		if($this->input->get('selectcourse')) {
@@ -209,17 +223,32 @@ setInterval(function () {
 
 	public function student() {
 		$data = array();
+
 		$data['user'] = $this->session->userdata('user');
 		$data['menu_type'] = $this->session->userdata('menu_type');	
 		$data['semester'] = $this->semester_model->getSemester(null, array('is_active' => 1));
-
 
 		$data['title'] = 'Attendances Report';
 		$data['mycourse'] = $this->course_model->getStudentCourseOpen($data['semester'][0]->id , $data['user']->nrp);
 		$data['myatt'] = $this->attendances_model->getStudentAbsence($data['user']->nrp);
 
-		$data['js'] = ' $("#tablearticle").DataTable({
+		if($this->input->get('selectcourse')) {
+			//die();
+			if($this->input->get('selectcourse') != '-') {
+
+				$data['myatt'] = $this->attendances_model->getStudentAbsence($data['user']->nrp, $this->input->get('selectcourse'));
+			}
+		} 
+		
+$data['js'] = ' $("#tablearticle").DataTable({
    	      "responsive": true	});';
+		
+
+   	    $data['js'] .= '
+			$("#selectcourse").on("change", function() {
+				$("#formreport").submit();
+			});
+		';
 
 		$this->load->view('v_header', $data);
 		$this->load->view('v_report_student_attendances', $data);

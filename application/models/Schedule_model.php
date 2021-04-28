@@ -30,6 +30,12 @@ class Schedule_model extends CI_Model {
 		$this->db->update('schedule', $data);
 	}
 
+	public function updateScheduleTopic($id, $topic) {
+		$data = array('topics' => $topic);
+		$this->db->where('id', $id);
+		$this->db->update('schedule', $data);
+	}
+
 	public function updatemethod($id, $methods) {
 		$data = array(  'methods' => $methods);
 		$this->db->where('id', $id);
