@@ -24,4 +24,21 @@
     <string name="copypasteclasscode">Enter this class code into QBAS website to record your attendances. Each code only last for 10 seconds. Use refresh code button to retrieve new code.</string>
     <string name="dismiss">Dismiss</string>
     <string name="refreshcode">Refresh Code</string>
+    <string name="templatecoursename">Native Mobile Programming</string>
+    <string name="templateschedule">Thursday, 06th May 2021</string>
+    <string name="templateabsence">Attend</string>
+    <string name="coursefeedback">Course Feedback</string>
+    <string name="waktureal">Apakah waktu pembelajaran riil sesuai dengan jadwal?</string>
+    <string name="lebihsedikit">Lebih Sedikit</string>
+    <string name="setara">Setara</string>
+    <string name="lebihbanyak">Lebih Banyak</string>
+    <string name="topikreal">Apakah topik pembelajaran riil sesuai dengan topik yang tertulis di atas?</string>
+    <string name="templatetopik">Topik: ABC</string>
+    <string name="aksesmateri">Seberapa mudah akses untuk mengambil materi perkuliahan ini di platform ULS?</string>
+    <string name="belumada">Belum Ada</string>
+    <string name="tidaklengkap">Ada, tidak lengkap</string>
+    <string name="lengkap">Lengkap</string>
+    <string name="ya">Ya</string>
+    <string name="tidak">Tidak</string>
+    <string name="update">Update</string>
 </resources>

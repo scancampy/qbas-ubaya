@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/body1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CourseFeedbackDialogFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/textView11"
+                style=" "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/coursefeedback"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView12"
+                style="@style/body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="24dp"
+                android:text="@string/waktureal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtScheduleStartDate" />
+
+            <RadioGroup
+                android:id="@+id/radioWaktu"
+                style="@style/body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView12">
+
+                <RadioButton
+                    android:id="@+id/radioSedikit"
+                    style="@style/body1"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:tag="Lebih Sedikit"
+                    android:text="@string/lebihsedikit" />
+
+                <RadioButton
+                    android:id="@+id/radioSetara"
+                    style="@style/body1"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:checked="true"
+                    android:tag="Setara"
+                    android:text="@string/setara" />
+
+                <RadioButton
+                    android:id="@+id/radioBanyak"
+                    style="@style/body1"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:tag="Lebih Banyak"
+                    android:text="@string/lebihbanyak" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/textView13"
+                style="@style/body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="24dp"
+                android:text="@string/topikreal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/radioWaktu" />
+
+            <TextView
+                android:id="@+id/txtCourseName"
+                style="@style/body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:text="@string/templatecoursename"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView11" />
+
+            <TextView
+                android:id="@+id/txtScheduleStartDate"
+                style="@style/body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:text="@string/templateschedule"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtCourseName" />
+
+            <TextView
+                android:id="@+id/txtTopics"
+                style="@style/body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:text="@string/templatetopik"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtScheduleStartDate" />
+
+            <Button
+                android:id="@+id/btnUpdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="24dp"
+                android:text="@string/update"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/radioMateri"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <RadioGroup
+                android:id="@+id/radioTopik"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView13">
+
+                <RadioButton
+                    android:id="@+id/radioYa"
+                    style="@style/body1"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:checked="true"
+                    android:tag="Ya"
+                    android:text="@string/ya" />
+
+                <RadioButton
+                    android:id="@+id/radioTidak"
+                    style="@style/body1"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:checked="false"
+                    android:tag="Tidak"
+                    android:text="@string/tidak" />
+
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/textView14"
+                style="@style/body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="24dp"
+                android:inputType="textMultiLine"
+                android:text="@string/aksesmateri"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/radioTopik" />
+
+            <RadioGroup
+                android:id="@+id/radioMateri"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView14">
+
+                <RadioButton
+                    android:id="@+id/radioBelum"
+                    style="@style/body1"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:tag="Belum Ada"
+                    android:text="@string/belumada" />
+
+                <RadioButton
+                    android:id="@+id/radioTidakLengkap"
+                    style="@style/body1"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:tag="Ada, tidak lengkap"
+                    android:text="@string/tidaklengkap" />
+
+                <RadioButton
+                    android:id="@+id/radioLengkap"
+                    style="@style/body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:checked="true"
+                    android:tag="Lengkap"
+                    android:text="@string/lengkap" />
+            </RadioGroup>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</FrameLayout>

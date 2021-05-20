@@ -9,4 +9,6 @@
     <color name="textInputHint">#8ECAE6</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorDarkOrange">#FB8500</color>
+    <color name="colorDanger">#FF5252</color>
+    <color name="colorSuccess">#C6FF00</color>
 </resources>

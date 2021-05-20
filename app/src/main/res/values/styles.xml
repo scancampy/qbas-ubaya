@@ -61,6 +61,7 @@
 
 
 
+
     <style name="TextTitle" parent="Widget.MaterialComponents.TextView">
         <item name="android:fontFamily">@font/montserrat_bold</item>
         <item name="android:textColor">@color/colorPrimary</item>
