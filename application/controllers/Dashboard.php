@@ -100,28 +100,7 @@ class Dashboard extends CI_Controller {
 
 		
 		$data['js'] = '
-		// Restricts input for the given textbox to the given inputFilter function.
-function setInputFilter(textbox, inputFilter) {
-  ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
-    textbox.addEventListener(event, function() {
-      if (inputFilter(this.value)) {
-        this.oldValue = this.value;
-        this.oldSelectionStart = this.selectionStart;
-        this.oldSelectionEnd = this.selectionEnd;
-      } else if (this.hasOwnProperty("oldValue")) {
-        this.value = this.oldValue;
-        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
-      } else {
-        this.value = "";
-      }
-    });
-  });
-}
-
-setInputFilter(document.getElementById("classcode"), function(value) {
-  return /^\d*\.?\d*$/.test(value); // Allow digits and '.' only, using a RegExp
-});
-
+	
 		$(".btnqr").on("click", function() {
 			//alert("Tes");
 			var id = $(this).attr("attid");
@@ -129,13 +108,13 @@ setInputFilter(document.getElementById("classcode"), function(value) {
 			var course_open_id = $(this).attr("attopenid");
 
 			$.post("'.base_url('dashboard/generateqr').'", {nid:id, nnrp:nrp, ncourse_open_id:course_open_id}, function(data) {
-				
+			//	alert(data);
 				var obj = JSON.parse(data);
 				if(obj.result == true) {
 					var qr = obj.qr;
 					$("#qrimage").attr("src", "'.base_url('assets/images/').'" + qr);
 				}
-				//alert(data);
+				
 			});
 		});
 

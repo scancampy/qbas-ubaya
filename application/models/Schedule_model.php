@@ -57,5 +57,13 @@ class Schedule_model extends CI_Model {
 
 		$this->db->insert('schedule', $data);
 	}
+
+	public function getUpcomingSchedule($nrp, $course_id = null) {
+		
+		$q = $this->db->query("SELECT `schedule`.*, `course_open`.`KP`, `course_open`.course_id, `course`.`course_name`,  DATE_FORMAT(`schedule`.start_date, '%a, %d %b %Y - %H:%i') as `start_date_formatted`, `course`.`course_short_name` FROM `schedule` INNER JOIN course_open ON course_open.id = `schedule`.`course_open_id` INNER JOIN course ON course.course_id = course_open.course_id INNER JOIN student_course ON student_course.course_open_id = course_open.id WHERE `schedule`.`start_date` >= NOW() AND student_course.student_nrp = '".$nrp."'");
+
+		return $q->result();
+
+	}
 }
 ?> 

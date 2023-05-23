@@ -99,7 +99,7 @@
                 </div>
                 <div class="col-12">
                   <?php if($current[0]['methods'] == 'auto') { ?>
-                  <button class="btn btn-primary btnqr" data-toggle="modal" data-target="#myModal" attid="<?php echo $current[0]['id']; ?>" attnrp="<?php echo $user->nrp; ?>" attopenid="<?php echo $current[0]['course_open_id']; ?>"> <i class="nav-icon fas fa-qrcode"></i> Request QR</button>
+                  <button class="btn btn-primary btnqr" data-toggle="modal" data-target="#myModal" type="button" attid="<?php echo $current[0]['id']; ?>" attnrp="<?php echo $user->nrp; ?>" attopenid="<?php echo $current[0]['course_open_id']; ?>"> <i class="nav-icon fas fa-qrcode"></i> Request QR</button>
                 <?php }  ?>
                 </div>
               </form>

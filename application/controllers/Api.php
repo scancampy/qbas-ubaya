@@ -18,6 +18,39 @@ class Api extends CI_Controller {
 		}
 	}
 
+	//SCHEDULE
+	public function getstudentschedule() {
+		if($this->input->post('nrp')) {
+			$result = $this->schedule_model->getUpcomingSchedule($this->input->post('nrp'), null);
+			echo json_encode(array('result' => true, 'data' => $result));
+		} else {
+			echo json_encode(array('result'=> false));
+		}
+	}
+	// END OF SCHEDULE
+
+	// REPORT
+	public function getstudentreport() {
+		$data = array();
+		$data['semester'] = $this->semester_model->getSemester(null, array('is_active' => 1));
+
+		if($this->input->post('nrp')) {
+			$data['mycourse'] = $this->course_model->getStudentCourseOpen($data['semester'][0]->id , $this->input->post('nrp'));
+			$data['myatt'] = $this->attendances_model->getStudentAbsence($this->input->post('nrp'));
+
+			echo json_encode(array('result' => true, 'mycourse' => $data['mycourse'], 'myatt' => $data['myatt']));
+		}
+	}
+
+	public function updatefeedback() {
+		$data = array();
+		if($this->input->post('id')) {
+			$this->attendances_model->updateFeedback($this->input->post('id'), $this->input->post('waktu_riil'), $this->input->post('topik_riil'), $this->input->post('akses_materi'));
+			echo json_encode(array('result' => true));
+		}
+	}
+	// end of REPORT
+
 	public function getserverdate() {
 		echo json_encode(array('serverdate' => strftime("%A, %d %B %Y", strtotime("now"))));
 	}
@@ -37,6 +70,7 @@ class Api extends CI_Controller {
 	}
 
 	public function getupcoming() {
+		//$nrp = '160417075';
 		if($this->input->post('nrp')) {
 			$result = $this->attendances_model->checkAttendances($this->input->post('nrp'));
 			if($result == false) {

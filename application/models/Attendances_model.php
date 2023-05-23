@@ -123,17 +123,28 @@ class Attendances_model extends CI_Model {
 		}
 	}
 
-	public function getStudentAbsence($nrp, $course_id = null) {
+	public function updateFeedback($id, $waktu_riil, $topik_riil, $akses_materi) {
+		$data = array('waktu_riil' => $waktu_riil, 'topik_riil' => $topik_riil, 'akses_materi' => $akses_materi);
+		$this->db->where('id', $id);
+		$this->db->update('absence', $data);
+	}
+
+	public function getStudentAbsence($nrp, $course_id = null, $beforecurrentdate = true) {
 		$wherecourse = '';
+		$wherebeforecurrentdate ='';
 		if($course_id != null) {
 			$wherecourse = " AND course.course_id = '".$course_id."' ";
 		}
 
-		$q = $this->db->query("SELECT absence.*, schedule.start_date, course_open.KP, course.course_short_name, course.course_id FROM `absence` 
+		if($beforecurrentdate) {
+			$wherebeforecurrentdate = " AND schedule.start_date <= NOW() + INTERVAL 1 DAY ";
+		} 
+
+		$q = $this->db->query("SELECT absence.*, schedule.start_date, schedule.topics, course_open.KP, course.course_short_name, course.course_name, course.course_id, DATE_FORMAT(schedule.start_date, '%a, %d %b %Y - %H:%i') as `start_date_formatted` FROM `absence` 
 INNER JOIN schedule ON schedule.id = absence.schedule_id
 INNER JOIN course_open ON course_open.id = absence.course_open_id
 INNER JOIN course ON course.course_id = course_open.course_id 
-WHERE absence.student_nrp = $nrp ".$wherecourse);
+WHERE absence.student_nrp = $nrp ".$wherecourse.$wherebeforecurrentdate." ORDER BY schedule.start_date DESC");
 		//echo $this->db->last_query(); 
 
 		return $q->result();
@@ -265,7 +276,7 @@ WHERE absence.student_nrp = $nrp ".$wherecourse);
 		$active = $this->db->get_where('semester', array('is_active' => 1));
 		$hactive = $active->row();
 
-		$res = $this->db->query('SELECT student_course.*, course.*, course_open.KP FROM student_course, course_open,course WHERE course_open.semester_id = 1 AND course_open.id = student_course.course_open_id AND student_course.student_nrp = "'.$nrp.'" AND course.course_id = course_open.course_id;');
+		$res = $this->db->query('SELECT student_course.*, course.*, course_open.KP FROM student_course, course_open,course WHERE course_open.semester_id = '.$hactive->id.' AND course_open.id = student_course.course_open_id AND student_course.student_nrp = "'.$nrp.'" AND course.course_id = course_open.course_id;');
 		if($res->num_rows() > 0) {
 			$schedule = array();
 			foreach ($res->result() as $key => $value) {
@@ -292,7 +303,6 @@ WHERE absence.student_nrp = $nrp ".$wherecourse);
 
 			$new = array_multisort(array_map('strtotime',array_column($schedule,'start_date')),
                 SORT_ASC, $schedule);
-			//print_r($schedule);
 			return $schedule;
 		} else {
 			return false;

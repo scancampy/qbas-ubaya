@@ -697,12 +697,15 @@ class Admin extends CI_Controller {
 		$data['course'] = $this->course_model->getCourseOpen((int)$semester_id, (int)$course_open_id);
 		$data['student'] = $this->course_model->getStudentList((int)$course_open_id);
 
-		$where = ' is_deleted = 0 AND nrp NOT IN(';
-		foreach ($data['student'] as $key => $value) {
-			if($key != 0) { $where .= ', '; }
-			$where .= $value->nrp;
+		$where = ' is_deleted = 0 ';
+		if(count($data['student']) >0) {
+			$where .= ' AND nrp NOT IN(';
+			foreach ($data['student'] as $key => $value) {
+				if($key != 0) { $where .= ', '; }
+				$where .= $value->nrp;
+			}
+			$where .= ') ';
 		}
-		$where .= ') ';
 
 		$data['available_student'] = $this->student_model->getStudents(null, $where );
 		$data['name'] = $this->session->userdata('user')->full_name;
